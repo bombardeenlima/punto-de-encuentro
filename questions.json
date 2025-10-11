@@ -1,0 +1,292 @@
+[
+  {
+    "id": "q1_size_state",
+    "order": 1,
+    "text": "Si tuviera que elegir, ¿preferiría un gobierno más pequeño que ofrezca menos servicios o un gobierno más grande que ofrezca más servicios?",
+    "options": [
+      {"label": "Gobierno más pequeño (menos servicios)", "value": 1},
+      {"label": "Mayormente gobierno más pequeño", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Mayormente gobierno más grande", "value": 4},
+      {"label": "Gobierno más grande (más servicios)", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "economic",
+    "higher": "left",
+    "weight": 1,
+    "note": "Valores altos → preferencia por estado más grande / redistribución."
+  },
+  {
+    "id": "q2_expand_services",
+    "order": 2,
+    "text": "Cuando dice que está a favor de un gobierno más grande que ofrezca más servicios, ¿cree que sería mejor ampliar modestamente los servicios gubernamentales actuales o ampliarlos considerablemente?",
+    "options": [
+      {"label": "No ampliar / mantener igual", "value": 1},
+      {"label": "Ampliar muy poco", "value": 2},
+      {"label": "Ampliar modestamente", "value": 3},
+      {"label": "Ampliar bastante", "value": 4},
+      {"label": "Ampliar considerablemente", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "economic",
+    "higher": "left",
+    "weight": 1,
+    "note": "Refina q1; valores altos → mayor intervención/servicios públicos."
+  },
+  {
+    "id": "q3_corporate_profits",
+    "order": 3,
+    "text": "¿Cuál de las siguientes afirmaciones se acerca más a su opinión? Las corporaciones comerciales obtienen demasiadas ganancias / La mayoría de las corporaciones obtienen una cantidad justa y razonable de ganancias.",
+    "options": [
+      {"label": "La mayoría obtienen una cantidad justa", "value": 1},
+      {"label": "Mayormente obtienen una cantidad justa", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Mayormente obtienen demasiadas ganancias", "value": 4},
+      {"label": "Las corporaciones obtienen demasiadas ganancias", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "economic",
+    "higher": "left",
+    "weight": 1,
+    "note": "Valores altos → postura anti-corporativa / redistributiva."
+  },
+  {
+    "id": "q4_trade_effects",
+    "order": 4,
+    "text": "Pensando en el aumento del comercio de bienes y servicios entre Estados Unidos y otras naciones en las últimas décadas, ¿diría que EE. UU. ha ganado más de lo que ha perdido o perdido más de lo que ha ganado?",
+    "options": [
+      {"label": "Perdido más de lo que ha ganado", "value": 1},
+      {"label": "Mayormente perdido", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Mayormente ganado", "value": 4},
+      {"label": "Ganado más de lo que ha perdido", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "economic",
+    "higher": "right",
+    "weight": 1,
+    "note": "Valores altos → posición pro-comercio / más neoliberal."
+  },
+
+  {
+    "id": "q5_migration_identity",
+    "order": 5,
+    "text": "¿Cuál de las siguientes afirmaciones se acerca más a su opinión? La apertura a personas de todo el mundo es esencial para nuestra identidad como nación / Si se abre demasiado, corremos el riesgo de perder nuestra identidad.",
+    "options": [
+      {"label": "Abrirse demasiado pone en riesgo la identidad", "value": 1},
+      {"label": "Mayormente en desacuerdo con apertura amplia", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Mayormente a favor de apertura", "value": 4},
+      {"label": "La apertura es esencial para la identidad", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "libertarian",
+    "weight": 1,
+    "note": "Valores altos → postura más abierta/libertaria en lo cultural."
+  },
+  {
+    "id": "q6_public_language",
+    "order": 6,
+    "text": "¿Cuánto le molestaría escuchar regularmente a personas hablar un idioma distinto del inglés en lugares públicos de su comunidad?",
+    "options": [
+      {"label": "Mucho", "value": 1},
+      {"label": "Algo", "value": 2},
+      {"label": "Poco", "value": 3},
+      {"label": "Muy poco/raramente", "value": 4},
+      {"label": "Nada", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "libertarian",
+    "weight": 1,
+    "note": "Valores altos → mayor tolerancia cultural / libertario."
+  },
+  {
+    "id": "q7_feelings_country_0_100",
+    "order": 7,
+    "text": "En una escala del 0 al 100, ¿cómo te sientes hacia Estados Unidos? (0 = lo más frío/negativo posible, 100 = lo más cálido/positivo posible)",
+    "options": [
+      {"label": "0–20", "value": 1},
+      {"label": "21–40", "value": 2},
+      {"label": "41–60", "value": 3},
+      {"label": "61–80", "value": 4},
+      {"label": "81–100", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "authoritarian",
+    "weight": 0.7,
+    "note": "Valores altos → mayor sentimiento nacionalista / favorable al estatus quo nacional."
+  },
+  {
+    "id": "q8_country_comparison",
+    "order": 8,
+    "text": "¿Cuál de estas describe mejor tu opinión sobre Estados Unidos? Se destaca entre todos / Es uno de los mejores junto con otros / Hay otros mejores.",
+    "options": [
+      {"label": "Hay otros países mejores", "value": 1},
+      {"label": "Es uno de los mejores junto con otros", "value": 3},
+      {"label": "Se destaca entre todos", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "authoritarian",
+    "weight": 0.7,
+    "note": "Valores altos → mayor excepcionalismo nacionalista."
+  },
+
+  {
+    "id": "q9_how_much_to_equal_race",
+    "order": 9,
+    "text": "¿Cuánto más se necesita hacer para garantizar la igualdad de derechos para todos sin importar su origen racial o étnico?",
+    "options": [
+      {"label": "Nada en absoluto", "value": 1},
+      {"label": "Un poco", "value": 2},
+      {"label": "Algo", "value": 3},
+      {"label": "Bastante", "value": 4},
+      {"label": "Mucho", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "economic",
+    "higher": "left",
+    "weight": 1,
+    "note": "Valores altos → mayor apoyo a medidas redistributivas / de reparación."
+  },
+  {
+    "id": "q10_reconstruct_institutions",
+    "order": 10,
+    "text": "¿Qué se aproxima más a su opinión? ¿Las leyes e instituciones necesitan una reconstrucción completa porque están sesgadas, o se puede lograr el cambio dentro del sistema actual?",
+    "options": [
+      {"label": "Cambios posibles dentro del sistema actual", "value": 1},
+      {"label": "Mayormente dentro del sistema", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Mayormente necesitan reconstrucción", "value": 4},
+      {"label": "Necesitan reconstrucción completa", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "economic",
+    "higher": "left",
+    "weight": 1,
+    "note": "Valores altos → postura transformadora / redistributiva."
+  },
+  {
+    "id": "q11_trans_acceptance",
+    "order": 11,
+    "text": "¿Cree que una mayor aceptación social de las personas transgénero es...?",
+    "options": [
+      {"label": "Muy malo para la sociedad", "value": 1},
+      {"label": "Algo malo", "value": 2},
+      {"label": "Ni bueno ni malo", "value": 3},
+      {"label": "Algo bueno", "value": 4},
+      {"label": "Muy bueno", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "libertarian",
+    "weight": 1,
+    "note": "Valores altos → mayor libertarismo cultural y derechos civiles."
+  },
+  {
+    "id": "q12_prison_sentences",
+    "order": 12,
+    "text": "En general, ¿diría que las personas condenadas por delitos en este país cumplen demasiado tiempo, muy poco tiempo, o aproximadamente el tiempo correcto en prisión?",
+    "options": [
+      {"label": "Demasiado tiempo en prisión", "value": 1},
+      {"label": "Algo demasiado", "value": 2},
+      {"label": "Aproximadamente el tiempo correcto", "value": 3},
+      {"label": "Algo poco tiempo", "value": 4},
+      {"label": "Muy poco tiempo", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "libertarian",
+    "weight": 1,
+    "note": "Valores altos → postura penal más indulgente / libertaria en justicia criminal."
+  },
+
+  {
+    "id": "q13_experts_policy",
+    "order": 13,
+    "text": "En general, ¿diría que los expertos que estudian un tema durante muchos años son mejores o peores que otros para tomar buenas decisiones políticas sobre ese tema?",
+    "options": [
+      {"label": "Generalmente peores", "value": 1},
+      {"label": "Mayormente peores", "value": 2},
+      {"label": "Ni mejores ni peores", "value": 3},
+      {"label": "Mayormente mejores", "value": 4},
+      {"label": "Generalmente mejores", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "authoritarian",
+    "weight": 0.8,
+    "note": "Valores altos → mayor confianza en autoridad técnica/experta (autoritarismo institucional)."
+  },
+  {
+    "id": "q14_offended_too_easily",
+    "order": 14,
+    "text": "¿Qué tan problemático es que la gente se ofenda con demasiada facilidad por lo que dicen los demás?",
+    "options": [
+      {"label": "Ningún problema", "value": 1},
+      {"label": "Problema menor", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Problema mayor", "value": 4},
+      {"label": "Problema importante", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "libertarian",
+    "weight": 0.6,
+    "note": "Valores altos → defensa fuerte de la libertad de expresión frente a la 'sensibilidad'."
+  },
+  {
+    "id": "q15_offensive_speech",
+    "order": 15,
+    "text": "¿Qué tan problemático es que la gente diga cosas que son muy ofensivas para los demás?",
+    "options": [
+      {"label": "Ningún problema", "value": 1},
+      {"label": "Problema menor", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Problema mayor", "value": 4},
+      {"label": "Problema importante", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "authoritarian",
+    "weight": 0.6,
+    "note": "Valores altos → preferencia por limitar discurso ofensivo (protección social)."
+  },
+  {
+    "id": "q16_candidates_fit",
+    "order": 16,
+    "text": "¿Cuál se acerca más a tu opinión sobre los candidatos a un cargo político? Normalmente siento que hay al menos un candidato que comparte la mayoría de mis puntos de vista / Ninguno de los candidatos representa bien mis puntos de vista.",
+    "options": [
+      {"label": "Ninguno representa bien mis puntos de vista", "value": 1},
+      {"label": "Mayormente ninguno", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Mayormente hay alguno", "value": 4},
+      {"label": "Hay al menos un candidato que comparte la mayoría de mis puntos", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "political_alignment",
+    "higher": "none",
+    "weight": 0.3,
+    "note": "Indicador de alineación/política práctica. No participa directamente en cálculo de ejes principal."
+  },
+  {
+    "id": "q17_religion_and_government",
+    "order": 17,
+    "text": "¿Cuál de las siguientes afirmaciones se acerca más a su opinión? La religión debería mantenerse separada de las políticas gubernamentales / Las políticas gubernamentales deberían apoyar los valores y creencias religiosas.",
+    "options": [
+      {"label": "El gobierno debe apoyar valores religiosos", "value": 1},
+      {"label": "Mayormente apoyar valores religiosos", "value": 2},
+      {"label": "Neutral / no estoy seguro", "value": 3},
+      {"label": "Mayormente separación", "value": 4},
+      {"label": "Religión debe mantenerse separada", "value": 5}
+    ],
+    "scale": [1,5],
+    "axis": "social",
+    "higher": "libertarian",
+    "weight": 1,
+    "note": "Valores altos → separación iglesia-estado / libertario en lo cultural."
+  }
+]
