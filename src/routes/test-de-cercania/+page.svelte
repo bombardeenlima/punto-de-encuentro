@@ -26,7 +26,9 @@
 		axisRole?: "primary" | "secondary";
 	};
 
-	const axisDescriptors = {
+	type AxisId = "economic" | "social" | "political_alignment";
+
+	const axisDescriptors: Record<AxisId, AxisDescriptor> = {
 		economic: {
 			label: "Eje económico (X: izquierda <-> derecha)",
 			higherKey: "left",
@@ -45,7 +47,7 @@
 				lowNote: "Bajos (1-2) -> Derecha: mercado libre, propiedad privada, prioridad a intereses individuales o corporativos.",
 			},
 			axisRole: "primary",
-		} satisfies AxisDescriptor,
+		},
 		social: {
 			label: "Eje social (Y: autoritarismo <-> libertarismo)",
 			higherKey: "authoritarian",
@@ -64,7 +66,7 @@
 				lowNote: "Bajos (1-2) -> Libertarismo: apertura cultural, descentralización y cooperación internacional.",
 			},
 			axisRole: "primary",
-		} satisfies AxisDescriptor,
+		},
 		political_alignment: {
 			label: "Representación política",
 			higherKey: "represented",
@@ -77,8 +79,8 @@
 				center: "Tu sensación de representación varía según el proceso electoral.",
 			},
 			axisRole: "secondary",
-		} satisfies AxisDescriptor,
-	} as const satisfies Record<string, AxisDescriptor>;
+		},
+	};
 
 	type AxisKey = keyof typeof axisDescriptors;
 
@@ -269,7 +271,7 @@
 		</div>
 		<header class="space-y-3 text-center">
 			<p class="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Test de cercanía</p>
-			<h1 class="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Descubrí tu ubicación política</h1>
+			<h1 class="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Descubre tu ubicación política</h1>
 			<p class="mx-auto max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
 				Respondé las afirmaciones y obtené un mapa claro de tus preferencias económicas y culturales.
 			</p>
@@ -357,9 +359,6 @@
 				<header class="space-y-2">
 					<p class="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">{currentQuestion.axis === "economic" ? "Eje económico" : currentQuestion.axis === "social" ? "Eje cultural" : "Representación"}</p>
 					<h2 class="text-2xl font-semibold text-foreground">{currentQuestion.text}</h2>
-					{#if currentQuestion.note}
-						<p class="text-sm text-muted-foreground">{currentQuestion.note}</p>
-					{/if}
 				</header>
 
 				<form class="space-y-4" onsubmit={handleSubmit}>
