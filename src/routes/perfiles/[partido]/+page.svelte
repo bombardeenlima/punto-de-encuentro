@@ -1,20 +1,55 @@
 <script lang="ts">
-	import { Button, Card, CardContent, CardHeader, CardTitle } from "$lib";
+	import { Button, Card, CardContent, CardHeader, CardTitle, CartesianPlane } from "$lib";
 	import type { PageData } from "./$types";
 
 	type Profile = PageData["profile"];
 	type InfoItem = { label: string; value: string };
 	type LinkItem = { label: string; href: string; isExternal: boolean };
+	type Coordinates = PageData["coordinates"];
+	type PlanePoint = {
+		x: number;
+		y: number;
+		label?: string;
+		slug?: string;
+		id?: string;
+		color?: string;
+		isUser?: boolean;
+	};
+	type QuadrantNarrative = {
+		heading: string;
+		title: string;
+		description: string;
+	};
 
 	export let data: PageData;
 
 	const profile = data.profile;
+	const coordinates: Coordinates = data.coordinates;
 
 	const maybeText = (value: string | undefined | null) => {
 		if (typeof value !== "string") return null;
 		const trimmed = value.trim();
 		return trimmed.length > 0 ? trimmed : null;
 	};
+
+	const highlightedPoint: PlanePoint | null = coordinates
+		? {
+			x: coordinates.x,
+			y: coordinates.y,
+			label: profile.nombre,
+			slug: encodeURIComponent(profile.partido),
+			color: "var(--color-primary)",
+			isUser: true,
+		}
+		: null;
+
+	const planePoints = highlightedPoint ? [highlightedPoint] : [];
+
+	const formattedCoordinates = coordinates
+		? `(${coordinates.x.toFixed(2)}, ${coordinates.y.toFixed(2)})`
+		: null;
+
+	let planeNarrative: QuadrantNarrative | null = null;
 
 	const isHttpUrl = (value: string) => /^https?:\/\//i.test(value);
 
@@ -98,6 +133,36 @@
 			{/if}
 		</CardHeader>
 	</Card>
+
+	{#if coordinates}
+		<section class="space-y-3">
+			<h2 class="text-xl font-semibold text-foreground">Ubicación en el plano</h2>
+			<CartesianPlane
+				x={coordinates.x}
+				y={coordinates.y}
+				label={`Plano de ${profile.nombre}`}
+				points={planePoints}
+				singlePointMode
+				bind:narrative={planeNarrative}
+			/>
+			<div class="rounded-2xl border border-border/70 bg-background/95 p-4 text-sm text-muted-foreground">
+				<p class="text-foreground">
+					<span class="font-semibold">Coordenadas:</span> {formattedCoordinates}
+				</p>
+				{#if planeNarrative}
+					<div class="mt-3 space-y-1">
+						<p class="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{planeNarrative.heading}</p>
+						<p class="font-semibold text-foreground">{planeNarrative.title}</p>
+						<p>{planeNarrative.description}</p>
+					</div>
+				{/if}
+			</div>
+		</section>
+	{:else}
+		<section class="rounded-2xl border border-dashed border-border/60 bg-background/60 p-4 text-sm text-muted-foreground">
+			No hay coordenadas disponibles para este partido.
+		</section>
+	{/if}
 
 	{#if infoItems.length > 0}
 		<section class="space-y-4">

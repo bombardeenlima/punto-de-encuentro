@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as parties from "../parties.js";
+import type * as partyPositions from "../partyPositions.js";
 import type * as partyProfiles from "../partyProfiles.js";
 import type * as questions from "../questions.js";
 
@@ -27,6 +28,7 @@ import type * as questions from "../questions.js";
  */
 declare const fullApi: ApiFromModules<{
   parties: typeof parties;
+  partyPositions: typeof partyPositions;
   partyProfiles: typeof partyProfiles;
   questions: typeof questions;
 }>;

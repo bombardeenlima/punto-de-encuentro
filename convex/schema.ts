@@ -43,4 +43,9 @@ export default defineSchema({
     facebook: v.optional(v.string()),
     twitter: v.optional(v.string()),
   }).index("by_partido", ["partido"]),
+    party_positions: defineTable({
+    partido: v.string(),        
+    tema: v.string(),           
+    postura: v.union(v.string(), v.null()), 
+  })
 });

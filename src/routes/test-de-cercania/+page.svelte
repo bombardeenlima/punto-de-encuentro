@@ -1,17 +1,27 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { Button, CartesianPlane } from "$lib";
 	import type { PageData } from "./$types";
 
 	const { data } = $props<{ data: PageData }>();
 	const questions = data.questions;
 	const parties = data.parties ?? [];
+	const partyProfiles = data.partyProfiles ?? [];
 
 	type LoadedQuestion = (typeof questions)[number];
 	type PlotPoint = {
 		x: number;
 		y: number;
-		label: string;
+		label?: string;
 		isUser?: boolean;
+		slug?: string;
+		id?: string;
+	};
+
+	type QuadrantNarrative = {
+		heading: string;
+		title: string;
+		description: string;
 	};
 
 	const answerChoices = [
@@ -94,16 +104,41 @@
 	});
 
 		type LoadedParty = (typeof parties)[number];
+		type LoadedPartyProfile = (typeof partyProfiles)[number];
+
+		const normaliseKey = (value: string) =>
+			value
+				.normalize("NFD")
+				.replace(/\p{Diacritic}/gu, "")
+				.trim()
+				.toLowerCase();
+
+		const partyProfileMap = $derived.by(() => {
+			const map = new Map<string, LoadedPartyProfile>();
+			for (const profile of partyProfiles) {
+				const keys = new Set<string>();
+				keys.add(normaliseKey(profile.partido));
+				keys.add(normaliseKey(profile.nombre));
+				keys.add(normaliseKey(profile.nombre.replace(/\s+/g, " ")));
+				for (const key of keys) {
+					map.set(key, profile);
+				}
+			}
+			return map;
+		});
 
 		const partyPoints = $derived.by(() =>
 			parties
 				.map((party: LoadedParty) => {
 					const [coordX, coordY] = party.coordenadas;
 					if (typeof coordX !== "number" || typeof coordY !== "number") return null;
+					const profile = party.partido ? partyProfileMap.get(normaliseKey(party.partido)) : undefined;
 					return {
 						x: coordX,
 						y: coordY,
-						label: party.partido,
+						label: profile?.nombre ?? party.partido,
+						slug: profile ? encodeURIComponent(profile.partido) : undefined,
+						id: party._id,
 					} satisfies PlotPoint;
 				})
 				.filter((point: PlotPoint | null): point is PlotPoint => point != null),
@@ -125,6 +160,7 @@
 
 	let planeX = $state(0);
 	let planeY = $state(0);
+		let planeNarrative = $state<QuadrantNarrative | null>(null);
 
 	$effect(() => {
 		if (showResults && coordinates) {
@@ -179,6 +215,14 @@
 		answers = {};
 		showResults = false;
 	}
+
+	function handlePointActivate(event: CustomEvent<{ point: PlotPoint }>) {
+		const { point } = event.detail;
+		if (!point || point.isUser) return;
+		const targetSlug = point.slug ?? (point.label ? encodeURIComponent(point.label) : null);
+		if (!targetSlug) return;
+		goto(`/perfiles/${targetSlug}`);
+	}
 </script>
 
 <svelte:head>
@@ -229,7 +273,14 @@
 						<p class="mt-4 text-lg font-semibold text-foreground">
 							({planeX.toFixed(2)}, {planeY.toFixed(2)})
 						</p>
-						
+						{#if planeNarrative}
+							<div class="mt-6 rounded-2xl border border-border/60 bg-background/80 p-4 text-sm text-muted-foreground">
+								<span class="mb-2 block font-semibold uppercase tracking-[0.25em] text-foreground">{planeNarrative.heading}</span>
+								<p class="text-foreground">
+									<span class="font-semibold">{planeNarrative.title}:</span> {planeNarrative.description}
+								</p>
+							</div>
+						{/if}
 					</div>
 					<CartesianPlane
 						bind:x={planeX}
@@ -237,6 +288,8 @@
 						label="Resultado del test"
 						interactive={false}
 						points={displayedPoints}
+						bind:narrative={planeNarrative}
+						on:pointActivate={handlePointActivate}
 					/>
 				</div>
 

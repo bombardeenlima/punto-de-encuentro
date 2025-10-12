@@ -10,6 +10,7 @@
   const MIN_ZOOM = 1;
   const MAX_ZOOM = 12;
   const ZOOM_SENSITIVITY = 0.0015;
+  const LEVEL_THRESHOLD = RANGE / 2;
 
   type SelectDetail = { x: number; y: number };
   type PlanePoint = {
@@ -19,6 +20,7 @@
     isUser?: boolean;
     color?: string;
     id?: string;
+    slug?: string;
   };
 
   type HoveredPoint = {
@@ -38,7 +40,17 @@
     dist: number;
   };
 
-  const dispatch = createEventDispatcher<{ select: SelectDetail }>();
+  type PointActivateDetail = { point: PlanePoint };
+  type HorizontalAlignment = "left" | "right";
+  type VerticalAlignment = "authoritarian" | "libertarian";
+  type IntensityLevel = "high" | "moderate";
+  type QuadrantMessage = {
+    heading: string;
+    title: string;
+    description: string;
+  };
+
+  const dispatch = createEventDispatcher<{ select: SelectDetail; pointActivate: PointActivateDetail }>();
 
   let {
     x = $bindable(0),
@@ -46,12 +58,16 @@
     points = [] as PlanePoint[],
     interactive = false,
     label = "Plano cartesiano",
+    narrative = $bindable<QuadrantMessage | null>(null),
+    singlePointMode = false,
   } = $props<{
     x?: number;
     y?: number;
     points?: PlanePoint[];
     interactive?: boolean;
     label?: string;
+    narrative?: QuadrantMessage | null;
+    singlePointMode?: boolean;
   }>();
 
   let svgEl = $state<SVGSVGElement | null>(null);
@@ -182,7 +198,7 @@
   const outerDotStroke = $derived.by(() => 0.2 / zoom);
   const innerDotStroke = $derived.by(() => 0.15 / zoom);
 
-  const partyPoints = $derived.by(() => resolvedPoints.filter((point: PlanePoint) => !point.isUser));
+  const partyPoints = $derived.by(() => (singlePointMode ? [] : resolvedPoints.filter((point: PlanePoint) => !point.isUser)));
   const kdTree = $derived.by(() => buildKDTree(partyPoints));
   const nearestParties = $derived.by(() => {
     if (!kdTree || partyPoints.length === 0) return [] as { point: PlanePoint; distance: number }[];
@@ -192,6 +208,134 @@
       .sort((a, b) => a.dist - b.dist)
       .map((entry) => ({ point: entry.point, distance: entry.dist }));
   });
+
+  const displayedPoints = $derived.by(() => {
+    if (!singlePointMode) return resolvedPoints;
+  const userPoints = resolvedPoints.filter((point: PlanePoint) => point.isUser);
+    if (userPoints.length > 0) return userPoints;
+    if (resolvedPoints.length > 0) return resolvedPoints.slice(0, 1);
+    return [] as PlanePoint[];
+  });
+
+  const quadrantMessages: Record<HorizontalAlignment, Record<VerticalAlignment, Record<IntensityLevel, Record<IntensityLevel, QuadrantMessage>>>> = {
+    left: {
+      authoritarian: {
+        high: {
+          high: {
+            heading: "Izquierda Autoritaria",
+            title: "Alto colectivismo y alto control",
+            description: "Sistemas de planificación económica centralizada con fuerte centralización política.",
+          },
+          moderate: {
+            heading: "Izquierda Autoritaria",
+            title: "Alto colectivismo y control moderado",
+            description: "Economías planificadas con cierta apertura a espacios de participación.",
+          },
+        },
+        moderate: {
+          high: {
+            heading: "Izquierda Autoritaria",
+            title: "Colectivismo moderado y alto control",
+            description: "Modelos que priorizan el papel del Estado en la economía junto con un fuerte control social.",
+          },
+          moderate: {
+            heading: "Izquierda Autoritaria",
+            title: "Colectivismo moderado y control moderado",
+            description: "Esquemas de economía mixta con énfasis en el Estado y un marco político menos abierto.",
+          },
+        },
+      },
+      libertarian: {
+        high: {
+          high: {
+            heading: "Izquierda Libertaria",
+            title: "Alto colectivismo y alta libertad",
+            description: "Propuestas de organización comunitaria sin estructuras jerárquicas fuertes.",
+          },
+          moderate: {
+            heading: "Izquierda Libertaria",
+            title: "Alto colectivismo y libertad moderada",
+            description: "Descentralización cooperativa con cierto grado de normas compartidas.",
+          },
+        },
+        moderate: {
+          high: {
+            heading: "Izquierda Libertaria",
+            title: "Colectivismo moderado y alta libertad",
+            description: "Modelos de democracia plural con un Estado activo en la redistribución.",
+          },
+          moderate: {
+            heading: "Izquierda Libertaria",
+            title: "Colectivismo moderado y libertad moderada",
+            description: "Sistemas progresistas con Estado de bienestar, dentro de marcos institucionales amplios.",
+          },
+        },
+      },
+    },
+    right: {
+      authoritarian: {
+        high: {
+          high: {
+            heading: "Derecha Autoritaria",
+            title: "Alto mercado y alto control",
+            description: "Liberalización económica combinada con fuerte centralización política.",
+          },
+          moderate: {
+            heading: "Derecha Autoritaria",
+            title: "Alto mercado y control moderado",
+            description: "Economías abiertas con gobiernos de orientación tecnocrática y limitada pluralidad política.",
+          },
+        },
+        moderate: {
+          high: {
+            heading: "Derecha Autoritaria",
+            title: "Mercado moderado y alto control",
+            description: "Políticas económicas mixtas con instituciones sociales y culturales restrictivas.",
+          },
+          moderate: {
+            heading: "Derecha Autoritaria",
+            title: "Mercado moderado y control moderado",
+            description: "Economías con participación estatal selectiva y sistemas políticos con menor apertura.",
+          },
+        },
+      },
+      libertarian: {
+        high: {
+          high: {
+            heading: "Derecha Libertaria",
+            title: "Alto mercado y alta libertad",
+            description: "Economías totalmente liberalizadas y con énfasis en la autonomía individual.",
+          },
+          moderate: {
+            heading: "Derecha Libertaria",
+            title: "Alto mercado y libertad moderada",
+            description: "Predominio del mercado con un Estado reducido a funciones mínimas.",
+          },
+        },
+        moderate: {
+          high: {
+            heading: "Derecha Libertaria",
+            title: "Mercado moderado y alta libertad",
+            description: "Economías de mercado con regulación limitada y fuerte protección de libertades civiles.",
+          },
+          moderate: {
+            heading: "Derecha Libertaria",
+            title: "Mercado moderado y libertad moderada",
+            description: "Sistemas de mercado con intervención moderada y un marco institucional liberal.",
+          },
+        },
+      },
+    },
+  };
+  $effect(() => {
+    const horizontal: HorizontalAlignment = plotted.x <= 0 ? "left" : "right";
+    const vertical: VerticalAlignment = plotted.y >= 0 ? "authoritarian" : "libertarian";
+    const economicIntensity: IntensityLevel = Math.abs(plotted.x) >= LEVEL_THRESHOLD ? "high" : "moderate";
+    const libertyIntensity: IntensityLevel = Math.abs(plotted.y) >= LEVEL_THRESHOLD ? "high" : "moderate";
+    narrative = quadrantMessages[horizontal][vertical][economicIntensity][libertyIntensity];
+  });
+
+  export { narrative };
 
   function clampCoordinate(value: number) {
     const rounded = Math.round(value * 100) / 100;
@@ -316,6 +460,24 @@
 
   function clearHover() {
     hovered = null;
+  }
+
+  function handlePointActivate(point: PlanePoint) {
+    if (point.isUser) return;
+    dispatch("pointActivate", { point });
+  }
+
+  let lastClick = $state<{ key: string; time: number } | null>(null);
+
+  function handlePointClick(point: PlanePoint, key: string) {
+    if (point.isUser) return;
+    const now = Date.now();
+    if (lastClick && lastClick.key === key && now - lastClick.time <= 500) {
+      handlePointActivate(point);
+      lastClick = null;
+      return;
+    }
+    lastClick = { key, time: now };
   }
 
   type ZoomFocus = {
@@ -554,9 +716,15 @@
         </g>
 
         <g>
-          {#each resolvedPoints as point, index (getPointKey(point, index))}
+          {#each displayedPoints as point, index (getPointKey(point, index))}
+            {@const pointKey = getPointKey(point, index)}
             <!-- svelte-ignore a11y_no_static_element_interactions -->
-            <g role="presentation" onmouseenter={() => showHover(point, index)} onmouseleave={clearHover}>
+            <g
+              role="presentation"
+              onmouseenter={() => showHover(point, index)}
+              onmouseleave={clearHover}
+              onclick={() => handlePointClick(point, pointKey)}
+            >
               {#if point.label}
                 <title>{point.label}</title>
               {/if}
@@ -583,7 +751,7 @@
 
         {#if interactivePoint}
           <!-- svelte-ignore a11y_no_static_element_interactions -->
-          <g role="presentation" onmouseenter={() => showHover({ ...interactivePoint, label }, resolvedPoints.length)} onmouseleave={clearHover}>
+          <g role="presentation" onmouseenter={() => showHover({ ...interactivePoint, label }, displayedPoints.length)} onmouseleave={clearHover}>
             <title>{label}</title>
             <circle
               cx={interactivePoint.x}
@@ -693,9 +861,15 @@
           {/if}
         </g>
 
-        {#each resolvedPoints as point, index (getPointKey(point, index))}
+        {#each displayedPoints as point, index (getPointKey(point, index))}
+          {@const pointKey = getPointKey(point, index)}
           <!-- svelte-ignore a11y_no_static_element_interactions -->
-          <g role="presentation" onmouseenter={() => showHover(point, index)} onmouseleave={clearHover}>
+          <g
+            role="presentation"
+            onmouseenter={() => showHover(point, index)}
+            onmouseleave={clearHover}
+            onclick={() => handlePointClick(point, pointKey)}
+          >
             {#if point.label}
               <title>{point.label}</title>
             {/if}
@@ -737,13 +911,20 @@
       y = <span class="font-medium text-foreground">{y.toFixed(2)}</span>
     </span>
   </div>
-  {#if nearestParties.length > 0}
+  {#if !singlePointMode && nearestParties.length > 0}
     <div class="rounded-2xl border border-border/70 bg-card/80 p-3 text-xs text-muted-foreground">
       <span class="mb-2 block font-medium uppercase tracking-[0.2em] text-foreground">Partidos más cercanos</span>
       <ul class="space-y-1">
         {#each nearestParties as party, index}
+          {@const slug = party.point.slug ?? null}
           <li class="flex items-center justify-between">
-            <span class="text-foreground">{index + 1}. {party.point.label ?? "Sin nombre"}</span>
+            {#if slug}
+              <a class="text-foreground transition hover:text-primary" href={`/perfiles/${slug}`}>
+                {index + 1}. {party.point.label ?? "Sin nombre"}
+              </a>
+            {:else}
+              <span class="text-foreground">{index + 1}. {party.point.label ?? "Sin nombre"}</span>
+            {/if}
             <span>{formatDistance(party.distance)}</span>
           </li>
         {/each}
