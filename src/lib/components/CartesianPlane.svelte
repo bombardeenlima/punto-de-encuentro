@@ -26,6 +26,18 @@
     index: number;
   };
 
+  type KDNode = {
+    point: PlanePoint;
+    axis: number;
+    left: KDNode | null;
+    right: KDNode | null;
+  };
+
+  type Neighbor = {
+    point: PlanePoint;
+    dist: number;
+  };
+
   const dispatch = createEventDispatcher<{ select: SelectDetail }>();
 
   let {
@@ -173,9 +185,70 @@
   const outerDotStroke = $derived.by(() => 0.2 / zoom);
   const innerDotStroke = $derived.by(() => 0.15 / zoom);
 
+  const partyPoints = $derived.by(() => resolvedPoints.filter((point) => !point.isUser));
+  const kdTree = $derived.by(() => buildKDTree(partyPoints));
+  const nearestParties = $derived.by(() => {
+    if (!kdTree || partyPoints.length === 0) return [] as { point: PlanePoint; distance: number }[];
+    const target = { x: plotted.x, y: plotted.y };
+    const neighbors = nearestNeighbors(kdTree, target, 3);
+    return neighbors
+      .sort((a, b) => a.dist - b.dist)
+      .map((entry) => ({ point: entry.point, distance: entry.dist }));
+  });
+
   function clampCoordinate(value: number) {
     const rounded = Math.round(value * 100) / 100;
     return Math.max(-RANGE, Math.min(RANGE, rounded));
+  }
+
+  function buildKDTree(points: PlanePoint[], depth = 0): KDNode | null {
+    if (points.length === 0) return null;
+    const axis = depth % 2;
+    const sorted = [...points].sort((a, b) => (axis === 0 ? a.x - b.x : a.y - b.y));
+    const median = Math.floor(sorted.length / 2);
+    return {
+      point: sorted[median],
+      axis,
+      left: buildKDTree(sorted.slice(0, median), depth + 1),
+      right: buildKDTree(sorted.slice(median + 1), depth + 1),
+    };
+  }
+
+  function distance(a: { x: number; y: number }, b: { x: number; y: number }) {
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  }
+
+  function updateBestNeighbors(best: Neighbor[], candidate: Neighbor, k: number) {
+    const existingIndex = best.findIndex((entry) => entry.point === candidate.point);
+    if (existingIndex !== -1) {
+      if (candidate.dist < best[existingIndex].dist) {
+        best[existingIndex] = candidate;
+      }
+    } else {
+      best.push(candidate);
+    }
+    best.sort((a, b) => a.dist - b.dist);
+    if (best.length > k) best.length = k;
+    return best;
+  }
+
+  function nearestNeighbors(node: KDNode | null, target: { x: number; y: number }, k: number, best: Neighbor[] = []) {
+    if (!node) return best;
+    const dist = distance(target, node.point);
+    best = updateBestNeighbors(best, { point: node.point, dist }, k);
+    const diff = node.axis === 0 ? target.x - node.point.x : target.y - node.point.y;
+    const primary = diff < 0 ? node.left : node.right;
+    const secondary = diff < 0 ? node.right : node.left;
+    best = nearestNeighbors(primary, target, k, best);
+    const threshold = best.length === k ? best[best.length - 1].dist : Infinity;
+    if (Math.abs(diff) < threshold || best.length < k) {
+      best = nearestNeighbors(secondary, target, k, best);
+    }
+    return best;
+  }
+
+  function formatDistance(value: number) {
+    return `${value.toFixed(2)} u.`;
   }
 
   function normalisePointer(event: MouseEvent | PointerEvent) {
@@ -394,8 +467,8 @@
   }
 </script>
 
-{#if interactive}
-  <div class="flex flex-col gap-3">
+<div class="flex flex-col gap-3">
+  {#if interactive}
     <div class="flex items-center justify-between text-xs text-muted-foreground">
       <span class="font-medium uppercase tracking-[0.2em]">Plano </span>
       <span class="rounded-full bg-muted px-2 py-0.5 text-[10px]">Click o flechas para mover</span>
@@ -538,17 +611,7 @@
         </div>
       {/if}
     </button>
-    <div class="flex items-center justify-between text-xs text-muted-foreground">
-      <span>
-        x = <span class="font-medium text-foreground">{x.toFixed(2)}</span>
-      </span>
-      <span>
-        y = <span class="font-medium text-foreground">{y.toFixed(2)}</span>
-      </span>
-    </div>
-  </div>
-{:else}
-  <div class="flex flex-col gap-3">
+  {:else}
     <div class="flex items-center justify-between text-xs text-muted-foreground">
       <span class="font-medium uppercase tracking-[0.2em]">Plano (Puedes acercarte y moverte)</span>
     </div>
@@ -658,13 +721,26 @@
         </div>
       {/if}
     </div>
-    <div class="flex items-center justify-between text-xs text-muted-foreground">
-      <span>
-        x = <span class="font-medium text-foreground">{x.toFixed(2)}</span>
-      </span>
-      <span>
-        y = <span class="font-medium text-foreground">{y.toFixed(2)}</span>
-      </span>
-    </div>
+  {/if}
+  <div class="flex items-center justify-between text-xs text-muted-foreground">
+    <span>
+      x = <span class="font-medium text-foreground">{x.toFixed(2)}</span>
+    </span>
+    <span>
+      y = <span class="font-medium text-foreground">{y.toFixed(2)}</span>
+    </span>
   </div>
-{/if}
+  {#if nearestParties.length > 0}
+    <div class="rounded-2xl border border-border/70 bg-card/80 p-3 text-xs text-muted-foreground">
+      <span class="mb-2 block font-medium uppercase tracking-[0.2em] text-foreground">Partidos más cercanos</span>
+      <ul class="space-y-1">
+        {#each nearestParties as party, index}
+          <li class="flex items-center justify-between">
+            <span class="text-foreground">{index + 1}. {party.point.label ?? "Sin nombre"}</span>
+            <span>{formatDistance(party.distance)}</span>
+          </li>
+        {/each}
+      </ul>
+    </div>
+  {/if}
+</div>
