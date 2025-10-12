@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from "$lib";
+	import { Button, CartesianPlane } from "$lib";
 	import type { PageData } from "./$types";
 
 	const { data } = $props<{ data: PageData }>();
@@ -86,6 +86,19 @@
 		return { x, y };
 	});
 
+	let planeX = $state(0);
+	let planeY = $state(0);
+
+	$effect(() => {
+		if (showResults && coordinates) {
+			planeX = coordinates.x;
+			planeY = coordinates.y;
+		} else if (!showResults) {
+			planeX = 0;
+			planeY = 0;
+		}
+	});
+
 	function startTest(type: number) {
 		selectedTestType = type;
 		currentIndex = 0;
@@ -166,15 +179,16 @@
 
 		{#if showResults && coordinates && selectedTest}
 			<div class="space-y-6" aria-live="polite">
-				<div class="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5">
-					<p class="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">Resultado</p>
-					<h2 class="mt-2 text-2xl font-semibold text-foreground">Coordenadas finales</h2>
-					<p class="mt-4 text-lg font-semibold text-foreground">
-						({coordinates.x}, {coordinates.y})
-					</p>
-					<p class="mt-2 text-sm text-muted-foreground">
-						Cada respuesta suma al eje x cuando la afirmación pertenece al eje 0 y al eje y cuando pertenece al eje 1.
-					</p>
+				<div class="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+					<div class="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5">
+						<p class="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">Resultado</p>
+						<h2 class="mt-2 text-2xl font-semibold text-foreground">Coordenadas finales</h2>
+						<p class="mt-4 text-lg font-semibold text-foreground">
+							({planeX.toFixed(2)}, {planeY.toFixed(2)})
+						</p>
+						
+					</div>
+					<CartesianPlane bind:x={planeX} bind:y={planeY} label="Resultado del test" interactive={false} />
 				</div>
 
 				<div class="flex flex-wrap items-center gap-3">

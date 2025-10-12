@@ -5,3 +5,5 @@ export {
 	type ButtonSize,
 	type ButtonVariant,
 } from "./components/ui/button/index.js";
+
+export { default as CartesianPlane } from "./components/CartesianPlane.svelte";
