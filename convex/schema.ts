@@ -14,13 +14,33 @@ export default defineSchema({
 
   partidos: defineTable({
     partido: v.string(),
-    coordenadas: v.array(v.number()), // [x, y]
-  })
-    .index("by_partido", ["partido"]),
+    coordenadas: v.array(v.number()), 
+  }).index("by_partido", ["partido"]),
+
+
+  party_profiles: defineTable({
+    partido: v.string(), 
+    nombre: v.string(),
+  logo: v.optional(v.id("_storage")),
+    fundacion: v.string(),
+    fundador: v.string(),
+    ideologia: v.string(),
+    ambitos: v.string(),
+    presidente: v.string(),
+    secretario: v.optional(v.string()),
+    organizaciones: v.optional(v.string()),
+    representacion: v.optional(v.string()),
+    historial: v.optional(v.string()),
+    alianzas: v.optional(v.string()),
+    elecciones: v.optional(v.string()),
+    multas: v.optional(v.string()),
+    sanciones: v.optional(v.string()),
+    procesos_legales: v.optional(v.string()),
+    corrupcion: v.optional(v.string()),
+    denuncias: v.optional(v.string()),
+    web: v.optional(v.string()),
+    correo: v.optional(v.string()),
+    facebook: v.optional(v.string()),
+    twitter: v.optional(v.string()),
+  }).index("by_partido", ["partido"]),
 });
-
-
-// criterios
-// eje - x = 0, y = 1.
-// n = 1, 2. donde 1 es test corto y 2 es test largo.
-// donde el test largo incluye las pereguntas del test corto.

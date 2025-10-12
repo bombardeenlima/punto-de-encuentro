@@ -187,8 +187,14 @@
 
 <section class="min-h-screen bg-background">
 	<div class="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-12 lg:py-16">
-		<div class="flex justify-center">
-			<Button variant="ghost" href="/">Volver a la página principal</Button>
+		<div class="flex justify-center sm:justify-start">
+			<Button
+				variant="ghost"
+				href="/"
+				class="w-fit px-0 text-sm text-muted-foreground hover:text-foreground"
+			>
+				← Volver a Inicio
+			</Button>
 		</div>
 		<header class="space-y-3 text-center">
 			<p class="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Test de cercanía</p>

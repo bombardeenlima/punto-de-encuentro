@@ -87,8 +87,8 @@
     const yPercent = ((svgY - minY) / span) * 100;
     return {
       label: point.label,
-      x: Math.min(95, Math.max(5, xPercent)),
-      y: Math.min(95, Math.max(5, yPercent)),
+      x: clampPercent(xPercent),
+      y: clampPercent(yPercent),
       isUser: point.isUser ?? false,
     };
   });
@@ -98,10 +98,7 @@
     return Math.pow(2, exponent);
   });
 
-  const displayGridStep = $derived.by(() => {
-    const step = GRID_STEP / stepScale;
-    return Math.max(step, GRID_STEP / 16);
-  });
+  const displayGridStep = $derived.by(() => Math.max(GRID_STEP / stepScale, GRID_STEP / 16));
 
   const displayMajorStep = $derived.by(() => displayGridStep * (MAJOR_STEP / GRID_STEP));
 
@@ -185,7 +182,7 @@
   const outerDotStroke = $derived.by(() => 0.2 / zoom);
   const innerDotStroke = $derived.by(() => 0.15 / zoom);
 
-  const partyPoints = $derived.by(() => resolvedPoints.filter((point) => !point.isUser));
+  const partyPoints = $derived.by(() => resolvedPoints.filter((point: PlanePoint) => !point.isUser));
   const kdTree = $derived.by(() => buildKDTree(partyPoints));
   const nearestParties = $derived.by(() => {
     if (!kdTree || partyPoints.length === 0) return [] as { point: PlanePoint; distance: number }[];
@@ -199,6 +196,10 @@
   function clampCoordinate(value: number) {
     const rounded = Math.round(value * 100) / 100;
     return Math.max(-RANGE, Math.min(RANGE, rounded));
+  }
+
+  function clampPercent(value: number) {
+    return Math.min(95, Math.max(5, value));
   }
 
   function buildKDTree(points: PlanePoint[], depth = 0): KDNode | null {
@@ -465,6 +466,8 @@
     if (Number.isInteger(rounded)) return rounded.toString();
     return rounded.toFixed(2).replace(/\.0+$/, "").replace(/0+$/, "");
   }
+  const wrapperBaseClass = "relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/80 shadow-sm";
+  const interactiveWrapperClass = `${wrapperBaseClass} cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`;
 </script>
 
 <div class="flex flex-col gap-3">
@@ -475,7 +478,7 @@
     </div>
     <button
       type="button"
-      class="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/80 shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      class={interactiveWrapperClass}
       aria-label={label}
       onclick={handlePointer}
       onkeydown={handleKeyDown}
@@ -615,7 +618,11 @@
     <div class="flex items-center justify-between text-xs text-muted-foreground">
       <span class="font-medium uppercase tracking-[0.2em]">Plano (Puedes acercarte y moverte)</span>
     </div>
-    <div class="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/80 shadow-sm" role="img" aria-label={label}>
+    <div
+      class={wrapperBaseClass}
+      role="img"
+      aria-label={label}
+    >
       <svg
         bind:this={svgEl}
         viewBox={viewBox}
