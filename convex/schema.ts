@@ -11,7 +11,15 @@ export default defineSchema({
     .index("by_n", ["n"])
     .index("by_eje", ["eje"])
     .index("by_criterio", ["criterio"]),
+
+  partidos: defineTable({
+    partido: v.string(),
+    coordenadas: v.array(v.number()), // [x, y]
+  })
+    .index("by_partido", ["partido"]),
 });
+
+
 // criterios
 // eje - x = 0, y = 1.
 // n = 1, 2. donde 1 es test corto y 2 es test largo.

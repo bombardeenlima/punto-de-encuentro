@@ -4,8 +4,15 @@
 
 	const { data } = $props<{ data: PageData }>();
 	const questions = data.questions;
+	const parties = data.parties ?? [];
 
 	type LoadedQuestion = (typeof questions)[number];
+	type PlotPoint = {
+		x: number;
+		y: number;
+		label: string;
+		isUser?: boolean;
+	};
 
 	const answerChoices = [
 		{ label: "Muy en desacuerdo", value: -2 },
@@ -86,6 +93,36 @@
 		return { x, y };
 	});
 
+		type LoadedParty = (typeof parties)[number];
+
+		const partyPoints = $derived.by(() =>
+			parties
+				.map((party: LoadedParty) => {
+					const [coordX, coordY] = party.coordenadas;
+					if (typeof coordX !== "number" || typeof coordY !== "number") return null;
+					return {
+						x: coordX,
+						y: coordY,
+						label: party.partido,
+					} satisfies PlotPoint;
+				})
+				.filter((point: PlotPoint | null): point is PlotPoint => point != null),
+		);
+
+		const displayedPoints = $derived.by(() => {
+			if (!showResults) return [] as PlotPoint[];
+			const base: PlotPoint[] = [...partyPoints];
+			if (coordinates) {
+				base.push({
+					x: planeX,
+					y: planeY,
+					label: "Tu resultado",
+					isUser: true,
+				});
+			}
+			return base;
+		});
+
 	let planeX = $state(0);
 	let planeY = $state(0);
 
@@ -156,10 +193,10 @@
 		<header class="space-y-3 text-center">
 			<p class="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Test de cercanía</p>
 			<h1 class="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-				Descubrí tus coordenadas políticas
+				Descubre tus coordenadas políticas
 			</h1>
 			<p class="mx-auto max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
-				Respondé y obtené un punto en el plano (x, y) según tu acuerdo o desacuerdo con cada afirmación.
+				Responde y obtene un punto en el plano (x, y) según tu acuerdo o desacuerdo con cada afirmación.
 			</p>
 		</header>
 
@@ -188,7 +225,13 @@
 						</p>
 						
 					</div>
-					<CartesianPlane bind:x={planeX} bind:y={planeY} label="Resultado del test" interactive={false} />
+					<CartesianPlane
+						bind:x={planeX}
+						bind:y={planeY}
+						label="Resultado del test"
+						interactive={false}
+						points={displayedPoints}
+					/>
 				</div>
 
 				<div class="flex flex-wrap items-center gap-3">
