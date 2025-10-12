@@ -4,120 +4,112 @@
 
 	const { data } = $props<{ data: PageData }>();
 	const questions = data.questions;
-	const totalQuestions = questions.length;
 
+	type LoadedQuestion = (typeof questions)[number];
+
+	const answerChoices = [
+		{ label: "Muy en desacuerdo", value: -2 },
+		{ label: "En desacuerdo", value: -1 },
+		{ label: "Neutral / No opino", value: 0 },
+		{ label: "De acuerdo", value: 1 },
+		{ label: "Muy de acuerdo", value: 2 },
+	] as const;
+
+	const getTestLabel = (type: number) => {
+		if (type === 1) return "Test corto";
+		if (type === 2) return "Test largo";
+		return `Test ${type}`;
+	};
+
+	const testCatalog = $derived.by(() => {
+		const grouped = new Map<number, LoadedQuestion[]>();
+		for (const question of questions) {
+			const bucket = grouped.get(question.n) ?? [];
+			bucket.push(question);
+			grouped.set(question.n, bucket);
+		}
+		return Array.from(grouped.entries())
+			.map(([type, items]) => {
+				let count = items.length;
+				let allQuestions = items;
+				if (type === 2) {
+					const cortoQuestions = grouped.get(1) ?? [];
+					count += cortoQuestions.length;
+					allQuestions = [...cortoQuestions, ...items];
+				}
+				return {
+					type,
+					label: getTestLabel(type),
+					count,
+					questions: allQuestions,
+				};
+			})
+			.sort((a, b) => a.type - b.type);
+	});
+
+	let selectedTestType = $state<number | null>(null);
 	let currentIndex = $state(0);
 	let answers = $state<Record<string, number>>({});
 	let showResults = $state(false);
 
-	type AxisDescriptor = {
-		label: string;
-		higherKey: string;
-		higherLabel: string;
-		lowerKey: string;
-		lowerLabel: string;
-		interpretations: Record<"higher" | "lower" | "center", string>;
-		guide?: {
-			headline: string;
-			questions: string[];
-			highNote: string;
-			lowNote: string;
-		};
-		axisRole?: "primary" | "secondary";
-	};
+	const selectedTest = $derived.by(() =>
+		testCatalog.find((entry) => entry.type === selectedTestType) ?? null,
+	);
+	const activeQuestions = $derived.by(() => selectedTest?.questions ?? []);
+	const totalQuestions = $derived.by(() => activeQuestions.length);
+	const currentQuestion = $derived.by(() => activeQuestions[currentIndex]);
+	const currentAnswer = $derived.by(() => (currentQuestion ? answers[currentQuestion._id] : undefined));
+	const answeredCount = $derived.by(() =>
+		activeQuestions.reduce((count, question) => (answers[question._id] == null ? count : count + 1), 0),
+	);
+	const progressPercent = $derived.by(() =>
+		totalQuestions === 0 ? 0 : Math.round((answeredCount / totalQuestions) * 100),
+	);
 
-	type AxisId = "economic" | "social" | "political_alignment";
+	const hasStarted = $derived.by(() => selectedTestType != null && !showResults);
 
-	const axisDescriptors: Record<AxisId, AxisDescriptor> = {
-		economic: {
-			label: "Eje económico (X: izquierda <-> derecha)",
-			higherKey: "left",
-			higherLabel: "Izquierda",
-			lowerKey: "right",
-			lowerLabel: "Derecha",
-			interpretations: {
-				higher: "Estatismo, redistribución y nacionalización de sectores estratégicos.",
-				lower: "Mercado libre, propiedad privada y prioridad a intereses corporativos o individuales.",
-				center: "Combinás intervención estatal y mercado según el tema económico.",
-			},
-			guide: {
-				headline: "Preguntas clave",
-				questions: ["P1", "P2", "P4"],
-				highNote: "Altos (4-5) -> Izquierda: estatismo, redistribución, nacionalización, protección de colectivos.",
-				lowNote: "Bajos (1-2) -> Derecha: mercado libre, propiedad privada, prioridad a intereses individuales o corporativos.",
-			},
-			axisRole: "primary",
-		},
-		social: {
-			label: "Eje social (Y: autoritarismo <-> libertarismo)",
-			higherKey: "authoritarian",
-			higherLabel: "Autoritarismo",
-			lowerKey: "libertarian",
-			lowerLabel: "Libertarismo",
-			interpretations: {
-				higher: "Orden, moral tradicional, centralismo y soberanía cerrada frente al exterior.",
-				lower: "Apertura cultural, descentralización y confianza en reformas institucionales.",
-				center: "Equilibrás entre valores tradicionales y apertura social según el tema.",
-			},
-			guide: {
-				headline: "Preguntas clave",
-				questions: ["P3", "P5", "P6", "P7"],
-				highNote: "Altos (4-5) -> Autoritarismo: énfasis en orden, moral tradicional, centralismo y nacionalismo.",
-				lowNote: "Bajos (1-2) -> Libertarismo: apertura cultural, descentralización y cooperación internacional.",
-			},
-			axisRole: "primary",
-		},
-		political_alignment: {
-			label: "Representación política",
-			higherKey: "represented",
-			higherLabel: "Representado",
-			lowerKey: "misaligned",
-			lowerLabel: "Desalineado",
-			interpretations: {
-				higher: "Sentís que existe al menos una opción política cercana a tus ideas.",
-				lower: "Percibís distancia con las alternativas políticas disponibles.",
-				center: "Tu sensación de representación varía según el proceso electoral.",
-			},
-			axisRole: "secondary",
-		},
-	};
-
-	type AxisKey = keyof typeof axisDescriptors;
-
-	const currentQuestion = $derived.by(() => questions[currentIndex]);
-	const currentSelection = $derived.by(() => (currentQuestion ? answers[currentQuestion.id] : undefined));
-	const answeredCount = $derived.by(() => Object.keys(answers).length);
-	const remainingQuestions = $derived.by(() => {
-		if (showResults) return 0;
-		return Math.max(0, totalQuestions - answeredCount);
-	});
-	const remainingProgress = $derived.by(() => {
-		if (totalQuestions === 0) return 0;
-		if (showResults) return 0;
-		return Math.max(0, Math.round((remainingQuestions / totalQuestions) * 100));
+	const coordinates = $derived.by(() => {
+		if (!showResults || !selectedTest) return null;
+		let x = 0;
+		let y = 0;
+		for (const question of selectedTest.questions) {
+			const value = answers[question._id] ?? 0;
+			const eje = Number(question.eje);
+			if (Number.isNaN(eje)) continue;
+			if (eje === 0) x += value;
+			if (eje === 1) y += value;
+		}
+		if (selectedTest.type === 1) {
+			x *= 2;
+			y *= 2;
+		}
+		return { x, y };
 	});
 
-	function selectAnswer(value: number) {
-		if (!currentQuestion) return;
-		answers[currentQuestion.id] = value;
+	function startTest(type: number) {
+		selectedTestType = type;
+		currentIndex = 0;
+		answers = {};
+		showResults = false;
+	}
+
+	function recordAnswer(questionId: string, value: number) {
+		answers = { ...answers, [questionId]: value };
 	}
 
 	function goNext() {
 		if (!currentQuestion) return;
-		if (currentSelection == null) return;
-
+		if (currentAnswer == null) return;
 		if (currentIndex >= totalQuestions - 1) {
 			showResults = true;
 			return;
 		}
-
 		currentIndex += 1;
 	}
 
 	function goBack() {
 		if (currentIndex === 0) return;
 		currentIndex -= 1;
-		showResults = false;
 	}
 
 	function handleSubmit(event: Event) {
@@ -125,143 +117,22 @@
 		goNext();
 	}
 
-	function restart() {
-		answers = {};
+	function restartTest() {
 		currentIndex = 0;
+		answers = {};
 		showResults = false;
 	}
 
-	function describeLeaning(leaning: "higher" | "lower" | "center", axis: AxisKey) {
-		const descriptor = axisDescriptors[axis];
-		return descriptor?.interpretations?.[leaning] ?? "Visión equilibrada en este eje.";
+	function goHome() {
+		selectedTestType = null;
+		currentIndex = 0;
+		answers = {};
+		showResults = false;
 	}
-
-	const HIGH_THRESHOLD = 0.75;
-	const LOW_THRESHOLD = 0.25;
-
-	const results = $derived.by(() => {
-		if (!showResults) return [];
-
-		const aggregates = new Map<string, { total: number; weight: number; scaleMin: number; scaleMax: number }>();
-
-		for (const question of questions) {
-			const response = answers[question.id];
-			if (response == null) continue;
-
-			const [min, max] = question.scale;
-			const normalized = (response - min) / (max - min || 1);
-			const axis = question.axis as keyof typeof axisDescriptors;
-			const descriptor = axisDescriptors[axis];
-			if (!descriptor) continue;
-
-			let aligned = normalized;
-			if (question.higher !== descriptor.higherKey && question.higher !== "none") {
-				aligned = 1 - normalized;
-			}
-
-			const entry =
-				aggregates.get(axis) ?? { total: 0, weight: 0, scaleMin: min, scaleMax: max };
-			entry.total += aligned * question.weight;
-			entry.weight += question.weight;
-			entry.scaleMin = Math.min(entry.scaleMin, min);
-			entry.scaleMax = Math.max(entry.scaleMax, max);
-			aggregates.set(axis, entry);
-		}
-
-		return Array.from(aggregates.entries()).map(([axis, { total, weight, scaleMin, scaleMax }]) => {
-			const descriptor = axisDescriptors[axis as keyof typeof axisDescriptors];
-			const average = weight > 0 ? total / weight : 0.5;
-			const leaningKey = average >= HIGH_THRESHOLD ? "higher" : average <= LOW_THRESHOLD ? "lower" : "center";
-			const leaningLabel =
-				leaningKey === "higher"
-					? descriptor.higherLabel
-					: leaningKey === "lower"
-						? descriptor.lowerLabel
-						: "Equilibrio";
-			const rawScore = scaleMin + average * (scaleMax - scaleMin);
-			const formattedScore = Math.round(rawScore * 10) / 10;
-			const intensity = Math.round(average * 100);
-
-			return {
-				axis,
-				label: descriptor.label,
-				leaningKey,
-				leaningLabel,
-				intensity,
-				average,
-				score: formattedScore,
-				scoreMax: scaleMax,
-				description: describeLeaning(leaningKey, axis as keyof typeof axisDescriptors),
-				higherLabel: descriptor.higherLabel,
-				lowerLabel: descriptor.lowerLabel,
-				guide: descriptor.guide,
-				axisRole: descriptor.axisRole ?? "secondary",
-			};
-		});
-	});
-
-	const resultByAxis = $derived.by(() => {
-		return new Map(results.map((result) => [result.axis as string, result]));
-	});
-
-	const quadrant = $derived.by(() => {
-		if (!showResults) return null;
-		const economic = resultByAxis.get("economic");
-		const social = resultByAxis.get("social");
-		if (!economic || !social) return null;
-
-		const econLean = economic.leaningKey;
-		const socialLean = social.leaningKey;
-
-		const quadrantMap = {
-			left_libertarian: {
-				name: "Izquierda Libertaria",
-				description:
-					"Estatismo económico con apertura cultural y énfasis en descentralización. Característico de movimientos progresistas urbanos, feministas o ambientalistas.",
-			},
-			left_authoritarian: {
-				name: "Izquierda Autoritaria",
-				description:
-					"Economía estatista combinada con moral conservadora, centralismo y soberanía fuerte. Común en corrientes nacional-populares.",
-			},
-			right_libertarian: {
-				name: "Derecha Libertaria",
-				description:
-					"Mercado libre con libertades sociales, apertura cultural y confianza en la globalización.",
-			},
-			right_authoritarian: {
-				name: "Derecha Autoritaria",
-				description:
-					"Prioridad al mercado junto con orden social rígido, centralismo y defensa de valores tradicionales.",
-			},
-		};
-
-		const isEconLeft = econLean === "higher";
-		const isEconRight = econLean === "lower";
-		const isSocialAuthoritarian = socialLean === "higher";
-		const isSocialLibertarian = socialLean === "lower";
-
-		if (!isEconLeft && !isEconRight || !isSocialAuthoritarian && !isSocialLibertarian) {
-			return {
-				name: "Zona intermedia",
-				description:
-					"Tus respuestas se ubican cerca del centro. Mezclás propuestas estatistas y de mercado con matices sociales que varían según el tema.",
-			};
-		}
-
-		const key = `${isEconLeft ? "left" : "right"}_${isSocialAuthoritarian ? "authoritarian" : "libertarian"}` as const;
-		return quadrantMap[key];
-	});
-
-	const readingTips = [
-		"Si alguien marca alto en P6 pero bajo en P3 y P5 -> perfil anti-sistema libertario (protesta social, rechazo a partidos, pero no conservador).",
-		"Si marca alto en P7 junto con P3 y P5 -> autoritarismo nacionalista (común en derechas e izquierdas conservadoras peruanas).",
-		"Si combina alto en P1, P2 y P4 pero bajo en P3, P5 y P7 -> izquierda progresista o libertaria (movimientos urbanos, feministas, ambientalistas).",
-	];
 </script>
 
 <svelte:head>
-	<title>Test de cercanía con partidos</title>
+	<title>Test de cercanía</title>
 </svelte:head>
 
 <section class="min-h-screen bg-background">
@@ -271,117 +142,104 @@
 		</div>
 		<header class="space-y-3 text-center">
 			<p class="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Test de cercanía</p>
-			<h1 class="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Descubre tu ubicación política</h1>
+			<h1 class="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+				Descubrí tus coordenadas políticas
+			</h1>
 			<p class="mx-auto max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
-				Respondé las afirmaciones y obtené un mapa claro de tus preferencias económicas y culturales.
+				Respondé y obtené un punto en el plano (x, y) según tu acuerdo o desacuerdo con cada afirmación.
 			</p>
 		</header>
 
-		<div class="space-y-4">
-			<div class="h-2 w-full rounded-full bg-muted">
-				<div
-					class="h-full rounded-full bg-primary transition-all duration-300"
-					style={`width: ${remainingProgress}%`}
-				></div>
+		{#if hasStarted}
+			<div class="space-y-4">
+				<div class="h-2 w-full rounded-full bg-muted" role="progressbar" aria-valuenow={progressPercent} aria-valuemin="0" aria-valuemax="100" aria-label="Progreso del test">
+					<div
+						class="h-full rounded-full bg-primary transition-all duration-300"
+						style={`width: ${progressPercent}%`}
+					></div>
+				</div>
+				<p class="text-sm text-muted-foreground" aria-live="polite">
+					Pregunta {currentIndex + 1} de {totalQuestions}
+				</p>
 			</div>
-			<p class="text-sm text-muted-foreground">
-				{showResults
-					? "Resultados listos"
-					: `Quedan ${remainingQuestions} ${remainingQuestions === 1 ? "pregunta" : "preguntas"} de ${totalQuestions}`}
-			</p>
-		</div>
+		{/if}
 
-		{#if showResults}
-			<div class="space-y-8">
+		{#if showResults && coordinates && selectedTest}
+			<div class="space-y-6" aria-live="polite">
 				<div class="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5">
-					<h2 class="text-2xl font-semibold text-foreground">Tus resultados</h2>
-					<p class="mt-2 text-base text-muted-foreground">
-						Promediamos tus respuestas en cada eje y las interpretamos según el mapa político peruano: economía (izquierda ↔ derecha) y sociedad (autoritarismo ↔ libertarismo).
+					<p class="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">Resultado</p>
+					<h2 class="mt-2 text-2xl font-semibold text-foreground">Coordenadas finales</h2>
+					<p class="mt-4 text-lg font-semibold text-foreground">
+						({coordinates.x}, {coordinates.y})
+					</p>
+					<p class="mt-2 text-sm text-muted-foreground">
+						Cada respuesta suma al eje x cuando la afirmación pertenece al eje 0 y al eje y cuando pertenece al eje 1.
 					</p>
 				</div>
 
-				{#if quadrant}
-					<article class="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5">
-						<p class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">Cuadrante final</p>
-						<h3 class="mt-2 text-xl font-semibold text-foreground">{quadrant.name}</h3>
-						<p class="mt-3 text-sm text-muted-foreground">{quadrant.description}</p>
-					</article>
-				{/if}
-
-				<div class="grid gap-6 md:grid-cols-2">
-					{#each results as result}
-						<article class="flex h-full flex-col justify-between rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5">
-							<header class="space-y-1">
-								<p class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">{result.label}</p>
-								<h3 class="text-xl font-semibold text-foreground">{result.leaningLabel === "Equilibrio" ? "Posición equilibrada" : `Tendencia ${result.leaningLabel}`}</h3>
-							</header>
-							<div class="mt-4 space-y-4">
-								<p class="text-sm font-semibold text-foreground">Promedio: {result.score} / {result.scoreMax}</p>
-								<p class="text-xs uppercase tracking-[0.25em] text-muted-foreground">Escala: {result.lowerLabel} ↔ {result.higherLabel}</p>
-								<div class="h-2 w-full rounded-full bg-muted">
-									<div
-										class={`h-full rounded-full ${result.leaningKey === "higher" ? "bg-emerald-500" : result.leaningKey === "lower" ? "bg-amber-500" : "bg-primary"}`}
-										style={`width: ${result.intensity}%`}
-									></div>
-								</div>
-								<p class="text-sm text-muted-foreground">{result.description}</p>
-								{#if result.guide}
-									<hr class="border-border/60" />
-									<div class="space-y-2 text-xs text-muted-foreground">
-										<p class="font-semibold uppercase tracking-[0.2em]">{result.guide.headline}</p>
-										<p>{result.guide.questions.join(", ")}</p>
-										<ul class="space-y-1">
-											<li>{result.guide.highNote}</li>
-											<li>{result.guide.lowNote}</li>
-										</ul>
-									</div>
-								{/if}
-							</div>
-						</article>
-					{/each}
-				</div>
-
-				<div class="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5">
-					<p class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">Tips para leer casos concretos</p>
-					<ul class="mt-3 space-y-2 text-sm text-muted-foreground">
-						{#each readingTips as tip}
-							<li>{tip}</li>
-						{/each}
-					</ul>
-				</div>
-
 				<div class="flex flex-wrap items-center gap-3">
-					<Button variant="outline" onclick={restart}>Volver a empezar</Button>
+					<Button variant="default" onclick={restartTest}>Repetir test</Button>
+					<Button variant="outline" onclick={goHome}>Elegir otro test</Button>
 				</div>
+			</div>
+		{:else if !selectedTestType}
+			<div class="grid gap-6 md:grid-cols-2">
+				{#each testCatalog as test}
+					<article class="flex h-full flex-col justify-between rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5">
+						<header class="space-y-1">
+							<p class="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">{test.label}</p>
+							<h2 class="text-xl font-semibold text-foreground">{test.count} preguntas</h2>
+						</header>
+						<p class="mt-3 text-sm text-muted-foreground">
+							Calcula tus coordenadas con las afirmaciones guardadas para este formato.
+						</p>
+						<div class="mt-6">
+							<Button class="w-full" onclick={() => startTest(test.type)}>Comenzar</Button>
+						</div>
+					</article>
+				{/each}
+				{#if testCatalog.length === 0}
+					<p class="col-span-full rounded-xl border border-dashed border-border/80 bg-card/70 p-6 text-center text-sm text-muted-foreground">
+						Todavía no hay preguntas cargadas.
+					</p>
+				{/if}
 			</div>
 		{:else if currentQuestion}
 			<article class="space-y-6">
 				<header class="space-y-2">
-					<p class="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">{currentQuestion.axis === "economic" ? "Eje económico" : currentQuestion.axis === "social" ? "Eje cultural" : "Representación"}</p>
-					<h2 class="text-2xl font-semibold text-foreground">{currentQuestion.text}</h2>
+					<p class="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+						{getTestLabel(selectedTestType)} • Afirmación {currentIndex + 1}
+					</p>
+					<h2 id="question-{currentQuestion._id}" class="text-2xl font-semibold text-foreground">{currentQuestion.pregunta}</h2>
 				</header>
 
 				<form class="space-y-4" onsubmit={handleSubmit}>
-					{#each currentQuestion.options as option}
-						<label class={`block cursor-pointer rounded-xl border border-border/60 bg-card/70 px-4 py-3 transition hover:border-primary/60 ${currentSelection === option.value ? "border-primary bg-primary/10" : ""}`}>
-							<input
-								type="radio"
-								name={currentQuestion.id}
-								class="sr-only"
-								value={option.value}
-								checked={currentSelection === option.value}
-								onchange={() => selectAnswer(option.value)}
-							/>
-							<span class="block text-base font-medium text-foreground">{option.label}</span>
-						</label>
-					{/each}
+					<div role="radiogroup" aria-labelledby="question-{currentQuestion._id}">
+						{#each answerChoices as option}
+							<label class={`block cursor-pointer rounded-xl border border-border/60 bg-card/70 px-4 py-3 transition hover:border-primary/60 ${currentAnswer === option.value ? "border-primary bg-primary/10" : ""}`}>
+								<input
+									type="radio"
+									name={currentQuestion._id}
+									class="sr-only"
+									value={option.value}
+									checked={currentAnswer === option.value}
+									onchange={() => recordAnswer(currentQuestion._id, option.value)}
+								/>
+								<span class="block text-base font-medium text-foreground">{option.label}</span>
+							</label>
+						{/each}
+					</div>
 
 					<div class="flex flex-wrap items-center gap-3 pt-2">
 						<Button variant="outline" type="button" onclick={goBack} disabled={currentIndex === 0}>Anterior</Button>
-						<Button type="submit" disabled={currentSelection == null}>{currentIndex === totalQuestions - 1 ? "Ver resultados" : "Siguiente"}</Button>
+						<Button type="submit" disabled={currentAnswer == null}>{currentIndex === totalQuestions - 1 ? "Finalizar" : "Siguiente"}</Button>
 					</div>
 				</form>
 			</article>
+		{:else}
+			<p class="rounded-xl border border-dashed border-border/80 bg-card/70 p-6 text-center text-sm text-muted-foreground">
+				No encontramos preguntas para este test.
+			</p>
 		{/if}
 	</div>
 </section>

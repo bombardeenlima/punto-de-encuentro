@@ -2,23 +2,17 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-	questions: defineTable({
-		id: v.string(),
-		order: v.number(),
-		text: v.string(),
-		options: v.array(
-			v.object({
-				label: v.string(),
-				value: v.number(),
-			}),
-		),
-		scale: v.array(v.number()),
-		axis: v.string(),
-		higher: v.string(),
-		weight: v.number(),
-		note: v.optional(v.string()),
-	})
-		.index("by_question_id", ["id"])
-		.index("by_order", ["order"])
-		.index("by_axis", ["axis"]),
+  afirmaciones: defineTable({
+    n: v.number(),
+    eje: v.string(),
+    criterio: v.string(),
+    pregunta: v.string(),
+  })
+    .index("by_n", ["n"])
+    .index("by_eje", ["eje"])
+    .index("by_criterio", ["criterio"]),
 });
+// criterios
+// eje - x = 0, y = 1.
+// n = 1, 2. donde 1 es test corto y 2 es test largo.
+// donde el test largo incluye las pereguntas del test corto.
