@@ -9,4 +9,5 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
+<a class="skip-link" href="#main-content">Saltar al contenido principal</a>
 {@render children?.()}

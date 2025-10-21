@@ -110,9 +110,10 @@
 	<title>{profile.nombre} | Perfiles de partidos</title>
 </svelte:head>
 
-<section class="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-6 py-16 sm:px-10">
+<main id="main-content" class="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-6 py-16 sm:px-10">
 	<Button variant="ghost" href="/perfiles" class="w-fit px-0 text-sm text-muted-foreground hover:text-foreground">
-		← Volver a los perfiles
+		<span aria-hidden="true">←</span>
+		<span>Volver a los perfiles</span>
 	</Button>
 
 	<Card class="overflow-hidden border border-border/70 bg-background/95">
@@ -208,4 +209,4 @@
 			</ul>
 		</section>
 	{/if}
-</section>
+</main>

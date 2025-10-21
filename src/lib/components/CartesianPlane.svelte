@@ -60,6 +60,7 @@
     label = "Plano cartesiano",
     narrative = $bindable<QuadrantMessage | null>(null),
     singlePointMode = false,
+    describedBy = undefined as string | undefined,
   } = $props<{
     x?: number;
     y?: number;
@@ -68,6 +69,7 @@
     label?: string;
     narrative?: QuadrantMessage | null;
     singlePointMode?: boolean;
+    describedBy?: string;
   }>();
 
   let svgEl = $state<SVGSVGElement | null>(null);
@@ -642,6 +644,7 @@
       type="button"
       class={interactiveWrapperClass}
       aria-label={label}
+      aria-describedby={describedBy}
       onclick={handlePointer}
       onkeydown={handleKeyDown}
     >
@@ -790,6 +793,7 @@
       class={wrapperBaseClass}
       role="img"
       aria-label={label}
+      aria-describedby={describedBy}
     >
       <svg
         bind:this={svgEl}
