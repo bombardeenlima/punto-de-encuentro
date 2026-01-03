@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button, Card, CardContent, CardHeader, CardTitle } from "$lib";
-	import type { PageData } from "./$types";
+	import { Button, Card, CardContent, CardHeader, CardTitle } from '$lib';
+	import type { PageData } from './$types';
 
-	type DisplayProfile = PageData["profiles"][number];
+	type DisplayProfile = PageData['profiles'][number];
 
 	export let data: PageData;
 
@@ -10,11 +10,11 @@
 
 	const slugify = (value: string) =>
 		value
-			.normalize("NFD")
-			.replace(/\p{Diacritic}/gu, "")
+			.normalize('NFD')
+			.replace(/\p{Diacritic}/gu, '')
 			.toLowerCase()
-			.replace(/[^a-z0-9]+/g, "-")
-			.replace(/^-+|-+$/g, "");
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '');
 
 	const profilesWithMetadata = profiles.map((profile, index) => {
 		const base = profile.partido ?? profile.nombre;
@@ -23,12 +23,15 @@
 		return {
 			...profile,
 			headingId,
-			href: `/perfiles/${encodeURIComponent(profile.partido ?? profile.nombre)}`,
+			href: `/perfiles/${encodeURIComponent(profile.partido ?? profile.nombre)}`
 		};
 	});
 </script>
 
-<main id="main-content" class="mx-auto flex min-h-screen max-w-5xl flex-col gap-10 px-6 py-16 sm:px-10">
+<main
+	id="main-content"
+	class="mx-auto flex min-h-screen max-w-5xl flex-col gap-10 px-6 py-16 sm:px-10"
+>
 	<div class="flex justify-center sm:justify-start">
 		<Button
 			variant="ghost"
@@ -56,14 +59,26 @@
 					class="group h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
 					aria-labelledby={profile.headingId}
 				>
-					<Card class="flex h-full flex-col overflow-hidden border border-border/70 bg-background/95 transition duration-200 group-hover:border-primary/70 group-hover:shadow-md">
+					<Card
+						class="flex h-full flex-col overflow-hidden border border-border/70 bg-background/95 transition duration-200 group-hover:border-primary/70 group-hover:shadow-md"
+					>
 						<CardHeader class="flex flex-col items-start gap-4 p-6">
 							{#if profile.logoUrl}
-								<div class="flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-dashed border-border/60 bg-muted/40 p-3">
-									<img src={profile.logoUrl} alt={`Logo de ${profile.nombre}`} class="max-h-full max-w-full object-contain" loading="lazy" />
+								<div
+									class="flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-dashed border-border/60 bg-muted/40 p-3"
+								>
+									<img
+										src={profile.logoUrl}
+										alt={`Logo de ${profile.nombre}`}
+										class="max-h-full max-w-full object-contain"
+										loading="lazy"
+									/>
 								</div>
 							{/if}
-							<CardTitle id={profile.headingId} class="text-lg font-semibold text-foreground group-hover:text-primary">
+							<CardTitle
+								id={profile.headingId}
+								class="text-lg font-semibold text-foreground group-hover:text-primary"
+							>
 								{profile.nombre}
 							</CardTitle>
 						</CardHeader>

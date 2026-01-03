@@ -1,6 +1,6 @@
-import adapter from "@sveltejs/adapter-auto";
-import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-import { resolve } from "node:path";
+import adapter from '@sveltejs/adapter-auto';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { resolve } from 'node:path';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,8 +14,8 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 		alias: {
-			$convex: resolve("./convex"),
-		},
+			$convex: resolve('./convex')
+		}
 	}
 };
 

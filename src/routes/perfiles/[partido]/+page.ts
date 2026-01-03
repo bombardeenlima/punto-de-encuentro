@@ -1,8 +1,8 @@
-import { error } from "@sveltejs/kit";
-import { ConvexHttpClient } from "convex/browser";
-import { api } from "$convex/_generated/api";
-import { PUBLIC_CONVEX_URL } from "$env/static/public";
-import type { PageLoad } from "./$types";
+import { error } from '@sveltejs/kit';
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '$convex/_generated/api';
+import { PUBLIC_CONVEX_URL } from '$env/static/public';
+import type { PageLoad } from './$types';
 
 export const ssr = true;
 
@@ -12,17 +12,17 @@ export const load: PageLoad = async ({ params }) => {
 	const client = new ConvexHttpClient(PUBLIC_CONVEX_URL);
 	const [profile, parties] = await Promise.all([
 		client.query(api.partyProfiles.getByPartido, { partido }),
-		client.query(api.parties.list, {}),
+		client.query(api.parties.list, {})
 	]);
 
 	if (!profile) {
-		throw error(404, "No encontramos el perfil solicitado.");
+		throw error(404, 'No encontramos el perfil solicitado.');
 	}
 
 	const normaliseKey = (value: string) =>
 		value
-			.normalize("NFD")
-			.replace(/\p{Diacritic}/gu, "")
+			.normalize('NFD')
+			.replace(/\p{Diacritic}/gu, '')
 			.trim()
 			.toLowerCase();
 
@@ -39,13 +39,13 @@ export const load: PageLoad = async ({ params }) => {
 	const coordinates = (() => {
 		if (!matchingParty) return null;
 		const [coordX, coordY] = matchingParty.coordenadas ?? [];
-		if (typeof coordX !== "number" || typeof coordY !== "number") return null;
+		if (typeof coordX !== 'number' || typeof coordY !== 'number') return null;
 		return { x: coordX, y: coordY } as const;
 	})();
 
 	return {
 		profile,
 		coordinates,
-		parties,
+		parties
 	};
 };

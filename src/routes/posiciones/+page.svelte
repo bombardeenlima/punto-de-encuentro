@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { Button } from "$lib";
+	import { Button } from '$lib';
 	import {
 		Accordion,
 		AccordionContent,
 		AccordionItem,
-		AccordionTrigger,
-	} from "$lib/components/ui/accordion";
-	import type { PageData } from "./$types";
+		AccordionTrigger
+	} from '$lib/components/ui/accordion';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -17,7 +17,7 @@
 			parties: topic.parties.filter((party) => {
 				const postura = party.postura?.trim();
 				return postura && postura.length > 0;
-			}),
+			})
 		}))
 		.filter((topic) => topic.parties.length > 0);
 </script>
@@ -39,18 +39,11 @@
 		</Button>
 	</div>
 	<header class="space-y-4 text-center sm:text-left">
-		<h1
-			id="topics-title"
-			class="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
-		>
+		<h1 id="topics-title" class="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
 			Posiciones de los partidos
 		</h1>
-		<p
-			id="topics-description"
-			class="mx-auto max-w-2xl text-pretty text-muted-foreground sm:mx-0"
-		>
-			Explorá cómo se posiciona cada partido frente a los temas que marcan la agenda
-			pública.
+		<p id="topics-description" class="mx-auto max-w-2xl text-pretty text-muted-foreground sm:mx-0">
+			Explorá cómo se posiciona cada partido frente a los temas que marcan la agenda pública.
 		</p>
 	</header>
 
@@ -65,18 +58,15 @@
 			{#each filteredTopics as topic}
 				<AccordionItem value={topic.tema}>
 					<AccordionTrigger
-						class="text-base font-semibold text-foreground px-4 py-3 sm:px-6"
+						class="px-4 py-3 text-base font-semibold text-foreground sm:px-6"
 						level={2}
 					>
 						{topic.tema}
 					</AccordionTrigger>
-					<AccordionContent class="space-y-4 px-4 pb-6 pt-4 text-sm text-muted-foreground">
-						<ul
-							class="space-y-3"
-							aria-label={`Posiciones de partidos sobre ${topic.tema}`}
-						>
+					<AccordionContent class="space-y-4 px-4 pt-4 pb-6 text-sm text-muted-foreground">
+						<ul class="space-y-3" aria-label={`Posiciones de partidos sobre ${topic.tema}`}>
 							{#each topic.parties as party}
-								<li class="border-border/60 bg-muted/40 rounded-md border p-4 sm:p-6">
+								<li class="rounded-md border border-border/60 bg-muted/40 p-4 sm:p-6">
 									<h3 class="text-sm font-semibold text-foreground">
 										{party.displayName}
 									</h3>

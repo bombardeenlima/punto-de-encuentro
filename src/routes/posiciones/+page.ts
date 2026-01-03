@@ -1,7 +1,7 @@
-import { ConvexHttpClient } from "convex/browser";
-import { api } from "$convex/_generated/api";
-import { PUBLIC_CONVEX_URL } from "$env/static/public";
-import type { PageLoad } from "./$types";
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '$convex/_generated/api';
+import { PUBLIC_CONVEX_URL } from '$env/static/public';
+import type { PageLoad } from './$types';
 
 export const ssr = true;
 
@@ -19,11 +19,11 @@ export const load: PageLoad = async () => {
 
 	const [positions, profiles] = await Promise.all([
 		client.query(api.partyPositions.list, {}),
-		client.query(api.partyProfiles.list, {}),
+		client.query(api.partyProfiles.list, {})
 	]);
 
 	const profilesByPartido = new Map(
-		profiles.map((profile) => [profile.partido, profile.nombre] as const),
+		profiles.map((profile) => [profile.partido, profile.nombre] as const)
 	);
 
 	const groupedByTema = positions.reduce<Map<string, TopicGroup>>((acc, item) => {
@@ -31,7 +31,7 @@ export const load: PageLoad = async () => {
 		if (!acc.has(key)) {
 			acc.set(key, {
 				tema: key,
-				parties: [],
+				parties: []
 			});
 		}
 
@@ -39,7 +39,7 @@ export const load: PageLoad = async () => {
 		group.parties.push({
 			partido: item.partido,
 			displayName: profilesByPartido.get(item.partido) ?? item.partido,
-			postura: item.postura ?? null,
+			postura: item.postura ?? null
 		});
 
 		return acc;
@@ -48,13 +48,13 @@ export const load: PageLoad = async () => {
 	const topics: TopicGroup[] = Array.from(groupedByTema.values()).map((group) => ({
 		...group,
 		parties: group.parties.sort((a, b) =>
-			a.displayName.localeCompare(b.displayName, "es", { sensitivity: "base" }),
-		),
+			a.displayName.localeCompare(b.displayName, 'es', { sensitivity: 'base' })
+		)
 	}));
 
-	topics.sort((a, b) => a.tema.localeCompare(b.tema, "es", { sensitivity: "base" }));
+	topics.sort((a, b) => a.tema.localeCompare(b.tema, 'es', { sensitivity: 'base' }));
 
 	return {
-		topics,
+		topics
 	};
 };

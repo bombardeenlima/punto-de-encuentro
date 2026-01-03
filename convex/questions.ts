@@ -1,8 +1,8 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
-import type { Doc } from "./_generated/dataModel";
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
+import type { Doc } from './_generated/dataModel';
 
-type Affirmation = Doc<"afirmaciones">;
+type Affirmation = Doc<'afirmaciones'>;
 
 const VALID_TEST_TYPES = new Set<number>([1, 2]);
 
@@ -18,7 +18,7 @@ export const list = query({
 	args: {
 		testType: v.optional(v.number()),
 		eje: v.optional(v.string()),
-		criterio: v.optional(v.string()),
+		criterio: v.optional(v.string())
 	},
 	handler: async (ctx, args) => {
 		const { testType, eje, criterio } = args;
@@ -27,30 +27,27 @@ export const list = query({
 			throw new Error(`Tipo de test no soportado: ${testType}`);
 		}
 
-			const rows: Affirmation[] = await (async () => {
-				if (criterio) {
-					return ctx
-						.db
-						.query("afirmaciones")
-						.withIndex("by_criterio", (range) => range.eq("criterio", criterio))
-						.collect();
-				}
-				if (eje) {
-					return ctx
-						.db
-						.query("afirmaciones")
-						.withIndex("by_eje", (range) => range.eq("eje", eje))
-						.collect();
-				}
-				if (testType != null) {
-					return ctx
-						.db
-						.query("afirmaciones")
-						.withIndex("by_n", (range) => range.eq("n", testType))
-						.collect();
-				}
-				return ctx.db.query("afirmaciones").collect();
-			})();
+		const rows: Affirmation[] = await (async () => {
+			if (criterio) {
+				return ctx.db
+					.query('afirmaciones')
+					.withIndex('by_criterio', (range) => range.eq('criterio', criterio))
+					.collect();
+			}
+			if (eje) {
+				return ctx.db
+					.query('afirmaciones')
+					.withIndex('by_eje', (range) => range.eq('eje', eje))
+					.collect();
+			}
+			if (testType != null) {
+				return ctx.db
+					.query('afirmaciones')
+					.withIndex('by_n', (range) => range.eq('n', testType))
+					.collect();
+			}
+			return ctx.db.query('afirmaciones').collect();
+		})();
 
 		// Aplica filtros residuales cuando no hay un índice específico.
 		const filtered = rows.filter((row) => {
@@ -61,18 +58,18 @@ export const list = query({
 		});
 
 		return sortAffirmations(filtered);
-	},
+	}
 });
 
 export const get = query({
-	args: { id: v.id("afirmaciones") },
+	args: { id: v.id('afirmaciones') },
 	handler: async (ctx, args) => {
 		const doc = await ctx.db.get(args.id);
 		if (!doc) {
-			throw new Error("La afirmación solicitada no existe");
+			throw new Error('La afirmación solicitada no existe');
 		}
 		return doc;
-	},
+	}
 });
 
 export const create = mutation({
@@ -80,35 +77,35 @@ export const create = mutation({
 		n: v.number(),
 		eje: v.string(),
 		criterio: v.string(),
-		pregunta: v.string(),
+		pregunta: v.string()
 	},
 	handler: async (ctx, args) => {
 		if (!VALID_TEST_TYPES.has(args.n)) {
 			throw new Error(`Tipo de test no soportado: ${args.n}`);
 		}
 
-		return ctx.db.insert("afirmaciones", {
+		return ctx.db.insert('afirmaciones', {
 			n: args.n,
 			eje: args.eje,
 			criterio: args.criterio,
-			pregunta: args.pregunta,
+			pregunta: args.pregunta
 		});
-	},
+	}
 });
 
 export const update = mutation({
 	args: {
-		id: v.id("afirmaciones"),
+		id: v.id('afirmaciones'),
 		n: v.optional(v.number()),
 		eje: v.optional(v.string()),
 		criterio: v.optional(v.string()),
-		pregunta: v.optional(v.string()),
+		pregunta: v.optional(v.string())
 	},
 	handler: async (ctx, args) => {
 		const { id, n, eje, criterio, pregunta } = args;
 		const existing = await ctx.db.get(id);
 		if (!existing) {
-			throw new Error("La afirmación solicitada no existe");
+			throw new Error('La afirmación solicitada no existe');
 		}
 
 		if (n != null && !VALID_TEST_TYPES.has(n)) {
@@ -136,20 +133,18 @@ export const update = mutation({
 		await ctx.db.patch(id, updates);
 		const next: Affirmation = { ...existing, ...updates };
 		return next;
-	},
+	}
 });
 
 export const remove = mutation({
-	args: { id: v.id("afirmaciones") },
+	args: { id: v.id('afirmaciones') },
 	handler: async (ctx, args) => {
 		const doc = await ctx.db.get(args.id);
 		if (!doc) {
-			throw new Error("La afirmación solicitada no existe");
+			throw new Error('La afirmación solicitada no existe');
 		}
 
 		await ctx.db.delete(args.id);
 		return doc;
-	},
+	}
 });
-
-
