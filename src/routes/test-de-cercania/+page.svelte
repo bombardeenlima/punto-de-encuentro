@@ -558,7 +558,7 @@
 				>
 					{currentQuestion.pregunta}
 				</h2>
-				<p class="mt-3 text-sm text-muted-foreground">
+				<p class="mt-3 hidden text-sm text-muted-foreground sm:block">
 					Usa las teclas <kbd
 						class="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-semibold"
 						>1-5</kbd
