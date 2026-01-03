@@ -1,5 +1,8 @@
 {
   "name": "punto-de-encuentro",
   "compatibility_date": "2026-01-03",
-  "main": ".svelte-kit/output/server/index.js"
+  "main": ".svelte-kit/output/server/index.js",
+  "assets": {
+    "directory": ".svelte-kit/output/client"
+  }
 }
