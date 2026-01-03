@@ -1,9 +1,9 @@
 {
   "name": "punto-de-encuentro",
   "compatibility_date": "2026-01-03",
-  "main": ".svelte-kit/output/server/index.js",
+  "main": ".svelte-kit/cloudflare/_worker.js",
   "assets": {
-    "directory": ".svelte-kit/output/client",
+    "directory": ".svelte-kit/cloudflare",
     "binding": "ASSETS"
   },
   "compatibility_flags": ["nodejs_compat"]
