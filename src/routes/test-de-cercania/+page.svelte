@@ -201,9 +201,35 @@
 			id: point.id ?? `${point.label ?? 'partido'}-${point.x}-${point.y}`,
 			label: point.label ?? 'Partido sin nombre',
 			description: `Ubicado ${describeCoordinates(point.x, point.y)} con coordenadas (${point.x.toFixed(2)}, ${point.y.toFixed(2)}).`,
-			link: point.slug ? `/perfiles/${point.slug}` : null
+			link: point.slug ? `/perfiles/${point.slug}` : null,
+			x: point.x,
+			y: point.y
 		}))
 	);
+
+	const nearestParties = $derived.by(() => {
+		if (!coordinates) return [];
+
+		return partyDescriptions
+			.map(
+				(party: {
+					id: string;
+					label: string;
+					description: string;
+					link: string | null;
+					x: number;
+					y: number;
+				}) => ({
+					...party,
+					distance: Math.sqrt(
+						Math.pow(party.x - coordinates.x, 2) + Math.pow(party.y - coordinates.y, 2)
+					)
+				})
+			)
+			.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
+	});
+
+	let questionContainerRef = $state<HTMLDivElement | null>(null);
 
 	$effect(() => {
 		if (showResults && coordinates) {
@@ -220,6 +246,13 @@
 			hasAnnouncedResults = true;
 			queueMicrotask(() => {
 				resultsSection?.focus();
+			});
+		}
+
+		// Focus on the question container when it changes for better keyboard navigation
+		if (hasStarted && !showResults && questionContainerRef) {
+			queueMicrotask(() => {
+				questionContainerRef?.focus();
 			});
 		}
 	});
@@ -275,103 +308,127 @@
 		if (!targetSlug) return;
 		goto(`/perfiles/${targetSlug}`);
 	}
+
+	function handleKeyboardNavigation(event: KeyboardEvent) {
+		if (!hasStarted || showResults) return;
+
+		// Arrow keys for navigation
+		if (event.key === 'ArrowLeft' && currentIndex > 0) {
+			event.preventDefault();
+			goBack();
+		} else if (event.key === 'ArrowRight' && currentAnswer != null) {
+			event.preventDefault();
+			goNext();
+		}
+
+		// Number keys 1-5 for answer selection
+		if (currentQuestion && event.key >= '1' && event.key <= '5') {
+			event.preventDefault();
+			const answerIndex = parseInt(event.key) - 1;
+			if (answerIndex < answerChoices.length) {
+				recordAnswer(currentQuestion._id, answerChoices[answerIndex].value);
+			}
+		}
+
+		// Enter to submit
+		if (event.key === 'Enter' && currentAnswer != null) {
+			event.preventDefault();
+			goNext();
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Test de cercanía</title>
 </svelte:head>
 
-<main id="main-content" class="min-h-screen bg-background" aria-labelledby="page-title">
-	<div class="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-12 lg:py-16">
-		<div class="flex justify-center sm:justify-start">
-			<Button
-				variant="ghost"
-				href="/"
-				class="w-fit px-0 text-sm text-muted-foreground hover:text-foreground"
-			>
-				← Volver a Inicio
-			</Button>
-		</div>
-		<header class="space-y-3 text-center">
-			<p class="text-sm font-semibold tracking-[0.3em] text-muted-foreground uppercase">
-				Test de cercanía
-			</p>
-			<h1
-				id="page-title"
-				class="text-3xl font-semibold tracking-tight text-balance text-foreground sm:text-4xl"
-			>
+<svelte:window onkeydown={handleKeyboardNavigation} />
+
+<div class="mx-auto max-w-5xl px-6 py-16">
+	<div class="mb-12">
+		<Button
+			variant="ghost"
+			href="/"
+			class="mb-6 flex w-fit items-center gap-2 px-0 text-sm text-muted-foreground hover:text-foreground"
+		>
+			<span aria-hidden="true">←</span>
+			<span>Volver a Inicio</span>
+		</Button>
+		<h1
+			id="page-title"
+			class="mb-4 text-5xl leading-tight font-bold tracking-tight text-foreground"
+		>
+			{#if hasStarted}
+				Test de cercanía política
+			{:else}
 				Descubre tus coordenadas políticas
-			</h1>
-			<p class="mx-auto max-w-2xl text-base text-balance text-muted-foreground sm:text-lg">
-				Responde y obtene un punto en el plano (x, y) según tu acuerdo o desacuerdo con cada
-				afirmación.
+			{/if}
+		</h1>
+		{#if !hasStarted}
+			<p class="max-w-3xl text-lg text-muted-foreground">
+				Responde y obtene un punto en el plano según tu acuerdo o desacuerdo con cada afirmación.
 			</p>
-		</header>
-
-		{#if hasStarted}
-			<div class="space-y-4">
-				<div
-					class="h-2 w-full rounded-full bg-muted"
-					role="progressbar"
-					aria-valuenow={progressPercent}
-					aria-valuemin="0"
-					aria-valuemax="100"
-					aria-label="Progreso del test"
-					aria-valuetext={`${answeredCount} de ${totalQuestions} respondidas`}
-				>
-					<div
-						class="h-full rounded-full bg-primary transition-all duration-300"
-						style={`width: ${progressPercent}%`}
-					></div>
-				</div>
-				<p class="text-sm text-muted-foreground" aria-live="polite">
-					Pregunta {currentIndex + 1} de {totalQuestions}
-				</p>
-			</div>
 		{/if}
+	</div>
 
-		{#if showResults && coordinates && selectedTest}
-			<div class="space-y-6" aria-live="polite">
-				<div class="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-					<div
-						class="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5 focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:outline-none"
-						role="status"
-						aria-live="polite"
-						tabindex="-1"
-						bind:this={resultsSection}
-						aria-describedby={planeDescription ? 'plane-description' : undefined}
-					>
-						<p class="text-xs font-semibold tracking-[0.25em] text-muted-foreground uppercase">
-							Resultado
+	{#if hasStarted}
+		<div class="mb-8 space-y-3">
+			<p class="text-center text-sm text-muted-foreground" aria-live="polite">
+				Pregunta {currentIndex + 1} de {totalQuestions}
+			</p>
+			<div
+				class="h-2 w-full rounded-full bg-muted"
+				role="progressbar"
+				aria-valuenow={progressPercent}
+				aria-valuemin="0"
+				aria-valuemax="100"
+				aria-label="Progreso del test"
+				aria-valuetext={`${answeredCount} de ${totalQuestions} respondidas`}
+			>
+				<div
+					class="h-full rounded-full bg-primary transition-all duration-300"
+					style={`width: ${progressPercent}%`}
+				></div>
+			</div>
+		</div>
+	{/if}
+
+	{#if showResults && coordinates && selectedTest}
+		<div class="space-y-6" aria-live="polite">
+			<!-- Results Header -->
+			<div class="grid gap-4 lg:grid-cols-2">
+				<div class="rounded-md border border-border bg-card p-6 text-center lg:p-8 lg:text-left">
+					<p class="mb-2 text-sm font-semibold text-muted-foreground">Resultado</p>
+					<h2 class="text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
+						({planeX.toFixed(2)}, {planeY.toFixed(2)})
+					</h2>
+				</div>
+				{#if planeNarrative}
+					<div class="rounded-md border border-border bg-card p-6 lg:p-8">
+						<p class="text-base font-semibold text-foreground sm:text-lg">{planeNarrative.title}</p>
+						<p class="mt-2 text-sm text-muted-foreground sm:text-base">
+							{planeNarrative.description}
 						</p>
-						<h2 class="mt-2 text-2xl font-semibold text-foreground">Coordenadas finales</h2>
-						<p class="mt-4 text-lg font-semibold text-foreground">
-							({planeX.toFixed(2)}, {planeY.toFixed(2)})
-						</p>
-						{#if planeNarrative}
-							<div
-								class="mt-6 rounded-2xl border border-border/60 bg-background/80 p-4 text-sm text-muted-foreground"
-							>
-								<span class="mb-2 block font-semibold tracking-[0.25em] text-foreground uppercase"
-									>{planeNarrative.heading}</span
-								>
-								<p class="text-foreground">
-									<span class="font-semibold">{planeNarrative.title}:</span>
-									{planeNarrative.description}
-								</p>
-							</div>
-						{/if}
-						{#if planeDescription}
-							<p id="plane-description" class="mt-4 text-sm text-muted-foreground">
-								{planeDescription}
-							</p>
-						{/if}
 					</div>
+				{/if}
+			</div>
+
+			<!-- Plane Visualization with Nearest Parties -->
+			<div class="grid gap-4 lg:grid-cols-[1fr_280px] lg:gap-6">
+				<div
+					class="min-w-0 overflow-hidden rounded-md border border-border bg-card"
+					role="status"
+					aria-live="polite"
+					tabindex="-1"
+					bind:this={resultsSection}
+					aria-describedby={planeDescription ? 'plane-description' : undefined}
+				>
 					<CartesianPlane
 						bind:x={planeX}
 						bind:y={planeY}
 						label="Resultado del test"
 						interactive={false}
+						singlePointMode={true}
 						points={displayedPoints}
 						bind:narrative={planeNarrative}
 						describedBy={planeDescription ? 'plane-description' : undefined}
@@ -379,116 +436,187 @@
 					/>
 				</div>
 
-				{#if partyDescriptions.length > 0}
-					<section
-						class="rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5"
-						aria-labelledby="plane-reference-heading"
-					>
-						<h3 id="plane-reference-heading" class="text-lg font-semibold text-foreground">
-							Referencias en el plano
-						</h3>
-						<p class="mt-2 text-sm text-muted-foreground">
-							Este resumen textual complementa la visualización para quienes no pueden interpretar
-							el gráfico.
-						</p>
-						<ul class="mt-4 space-y-3">
-							{#each partyDescriptions as party (party.id)}
-								<li class="text-sm text-muted-foreground">
-									<span class="block font-semibold text-foreground">{party.label}</span>
-									<span>{party.description}</span>
+				<!-- Nearest Parties Sidebar -->
+				<div class="min-w-0 rounded-md border border-border bg-card p-4 lg:p-5">
+					<h3 class="mb-3 text-base font-semibold text-foreground lg:text-lg">
+						Partidos más cercanos
+					</h3>
+					{#if nearestParties.length > 0}
+						<ul class="space-y-2.5">
+							{#each nearestParties.slice(0, 5) as party, index (party.id)}
+								<li class="text-sm">
 									{#if party.link}
-										<Button variant="link" href={party.link} class="px-0 text-sm">Ver perfil</Button
+										<a
+											href={party.link}
+											class="block font-medium text-foreground transition hover:text-primary"
 										>
+											<div class="flex items-baseline justify-between gap-2">
+												<span class="min-w-0 truncate">{index + 1}. {party.label}</span>
+												<span class="shrink-0 text-xs text-muted-foreground"
+													>{party.distance.toFixed(1)}u</span
+												>
+											</div>
+										</a>
+									{:else}
+										<div class="flex items-baseline justify-between gap-2">
+											<span class="min-w-0 truncate font-medium text-foreground">
+												{index + 1}. {party.label}
+											</span>
+											<span class="shrink-0 text-xs text-muted-foreground"
+												>{party.distance.toFixed(1)}u</span
+											>
+										</div>
 									{/if}
 								</li>
 							{/each}
 						</ul>
-					</section>
-				{/if}
-
-				<div class="flex flex-wrap items-center gap-3">
-					<Button variant="default" onclick={restartTest}>Repetir test</Button>
-					<Button variant="outline" onclick={goHome}>Elegir otro test</Button>
+					{:else}
+						<p class="text-sm text-muted-foreground">No hay partidos para mostrar.</p>
+					{/if}
 				</div>
+
+				{#if planeDescription}
+					<p id="plane-description" class="sr-only">
+						{planeDescription}
+					</p>
+				{/if}
 			</div>
-		{:else if !selectedTestType}
-			<div class="grid gap-6 md:grid-cols-2">
-				{#each testCatalog as test}
-					<article
-						class="flex h-full flex-col justify-between rounded-2xl border border-border/70 bg-card/70 p-6 shadow-sm shadow-black/5"
-					>
-						<header class="space-y-1">
-							<p class="text-xs font-semibold tracking-[0.25em] text-muted-foreground uppercase">
-								{test.label}
-							</p>
-							<h2 class="text-xl font-semibold text-foreground">{test.count} preguntas</h2>
-						</header>
-						<p class="mt-3 text-sm text-muted-foreground">
+
+			<!-- All Party References -->
+			{#if nearestParties.length > 0}
+				<div>
+					<h3 class="mb-4 text-2xl font-semibold text-foreground">
+						Todos los partidos en el plano
+					</h3>
+					<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						{#each nearestParties as party (party.id)}
+							<div
+								class="rounded-md border border-border bg-card p-4 transition-all hover:bg-accent/50"
+							>
+								<div class="mb-1 flex items-baseline justify-between gap-2">
+									<span class="font-semibold text-foreground">{party.label}</span>
+									<span class="text-xs text-muted-foreground">{party.distance.toFixed(1)}u</span>
+								</div>
+								<span class="block text-sm text-muted-foreground">{party.description}</span>
+								{#if party.link}
+									<a
+										href={party.link}
+										class="mt-2 inline-flex items-center text-sm font-medium text-primary hover:underline"
+									>
+										Ver perfil →
+									</a>
+								{/if}
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+			<!-- Action Buttons -->
+			<div class="flex flex-wrap items-center justify-center gap-3">
+				<Button variant="default" size="lg" onclick={restartTest}>Repetir test</Button>
+				<Button variant="outline" size="lg" onclick={goHome}>Elegir otro test</Button>
+			</div>
+		</div>
+	{:else if !selectedTestType}
+		<div class="grid gap-3 md:grid-cols-2">
+			{#each testCatalog as test}
+				<button
+					onclick={() => startTest(test.type)}
+					class="flex min-h-[200px] flex-col justify-between rounded-md border border-border bg-card p-8 text-left transition-all hover:bg-accent/50"
+				>
+					<div>
+						<p class="mb-1 text-xs font-semibold text-muted-foreground">
+							{test.label}
+						</p>
+						<h2 class="mb-3 text-2xl font-semibold text-foreground">{test.count} preguntas</h2>
+						<p class="text-sm leading-relaxed text-muted-foreground">
 							Calcula tus coordenadas con las afirmaciones guardadas para este formato.
 						</p>
-						<div class="mt-6">
-							<Button class="w-full" onclick={() => startTest(test.type)}>Comenzar</Button>
-						</div>
-					</article>
-				{/each}
-				{#if testCatalog.length === 0}
-					<p
-						class="col-span-full rounded-xl border border-dashed border-border/80 bg-card/70 p-6 text-center text-sm text-muted-foreground"
-					>
-						Todavía no hay preguntas cargadas.
-					</p>
-				{/if}
-			</div>
-		{:else if currentQuestion}
-			<article class="space-y-6">
-				<header class="space-y-2">
-					<p class="text-xs font-semibold tracking-[0.25em] text-muted-foreground uppercase">
-						{getTestLabel(selectedTestType)} • Afirmación {currentIndex + 1}
-					</p>
-					<h2 id="question-{currentQuestion._id}" class="text-2xl font-semibold text-foreground">
-						{currentQuestion.pregunta}
-					</h2>
-				</header>
-
-				<form class="space-y-4" onsubmit={handleSubmit} aria-describedby="question-instructions">
-					<p id="question-instructions" class="sr-only">
-						Seleccioná una sola opción para continuar.
-					</p>
-					<fieldset class="space-y-3" aria-labelledby="question-{currentQuestion._id}">
-						<legend class="sr-only">{currentQuestion.pregunta}</legend>
-						{#each answerChoices as option}
-							<label
-								class={`block cursor-pointer rounded-xl border border-border/60 bg-card/70 px-4 py-3 transition hover:border-primary/60 ${currentAnswer === option.value ? 'border-primary bg-primary/10' : ''}`}
-							>
-								<input
-									type="radio"
-									name={currentQuestion._id}
-									class="sr-only"
-									value={option.value}
-									checked={currentAnswer === option.value}
-									onchange={() => recordAnswer(currentQuestion._id, option.value)}
-								/>
-								<span class="block text-base font-medium text-foreground">{option.label}</span>
-							</label>
-						{/each}
-					</fieldset>
-
-					<div class="flex flex-wrap items-center gap-3 pt-2">
-						<Button variant="outline" type="button" onclick={goBack} disabled={currentIndex === 0}
-							>Anterior</Button
-						>
-						<Button type="submit" disabled={currentAnswer == null}
-							>{currentIndex === totalQuestions - 1 ? 'Finalizar' : 'Siguiente'}</Button
-						>
 					</div>
-				</form>
-			</article>
-		{:else}
-			<p
-				class="rounded-xl border border-dashed border-border/80 bg-card/70 p-6 text-center text-sm text-muted-foreground"
-			>
-				No encontramos preguntas para este test.
-			</p>
-		{/if}
-	</div>
-</main>
+					<div class="mt-4 text-sm font-medium text-foreground/60">Comenzar →</div>
+				</button>
+			{/each}
+			{#if testCatalog.length === 0}
+				<div
+					class="col-span-full rounded-md border border-dashed border-border bg-card/30 p-12 text-center"
+				>
+					<p class="text-sm text-muted-foreground">Todavía no hay preguntas cargadas.</p>
+				</div>
+			{/if}
+		</div>
+	{:else if currentQuestion}
+		<div
+			class="rounded-md border border-border bg-card p-8 focus:ring-2 focus:ring-primary/20 focus:outline-none"
+			bind:this={questionContainerRef}
+			tabindex="-1"
+		>
+			<div class="mb-6">
+				<h2
+					id="question-{currentQuestion._id}"
+					class="text-2xl leading-tight font-semibold text-foreground"
+				>
+					{currentQuestion.pregunta}
+				</h2>
+				<p class="mt-3 text-sm text-muted-foreground">
+					Usa las teclas <kbd
+						class="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-semibold"
+						>1-5</kbd
+					>
+					para seleccionar,
+					<kbd class="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-semibold"
+						>←</kbd
+					>
+					<kbd class="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-semibold"
+						>→</kbd
+					> para navegar
+				</p>
+			</div>
+
+			<form class="space-y-3" onsubmit={handleSubmit} aria-describedby="question-instructions">
+				<p id="question-instructions" class="sr-only">
+					Seleccioná una sola opción para continuar. Usa las teclas 1-5 para seleccionar respuestas,
+					flechas izquierda y derecha para navegar, Enter para continuar.
+				</p>
+				<fieldset class="space-y-2" aria-labelledby="question-{currentQuestion._id}">
+					<legend class="sr-only">{currentQuestion.pregunta}</legend>
+					{#each answerChoices as option, index}
+						<label
+							class={`block cursor-pointer rounded-md border px-5 py-4 transition-all ${currentAnswer === option.value ? 'border-primary bg-primary/5' : 'border-border bg-card hover:bg-accent/50'}`}
+						>
+							<input
+								type="radio"
+								name={currentQuestion._id}
+								class="sr-only"
+								value={option.value}
+								checked={currentAnswer === option.value}
+								onchange={() => recordAnswer(currentQuestion._id, option.value)}
+							/>
+							<span class="flex items-center gap-2">
+								<kbd
+									class="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-semibold text-muted-foreground"
+									>{index + 1}</kbd
+								>
+								<span class="text-sm font-medium text-foreground">{option.label}</span>
+							</span>
+						</label>
+					{/each}
+				</fieldset>
+
+				<div class="flex items-center justify-between gap-3 pt-4">
+					<Button variant="outline" type="button" onclick={goBack} disabled={currentIndex === 0}>
+						<span aria-hidden="true">←</span> Anterior
+					</Button>
+					<Button type="submit" disabled={currentAnswer == null}>
+						{currentIndex === totalQuestions - 1 ? 'Finalizar' : 'Siguiente'}
+						<span aria-hidden="true">→</span>
+					</Button>
+				</div>
+			</form>
+		</div>
+	{:else}
+		<div class="rounded-md border border-dashed border-border bg-card/30 p-12 text-center">
+			<p class="text-sm text-muted-foreground">No encontramos preguntas para este test.</p>
+		</div>
+	{/if}
+</div>

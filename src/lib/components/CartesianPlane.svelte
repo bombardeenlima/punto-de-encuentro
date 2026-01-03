@@ -666,7 +666,7 @@
 <div class="flex flex-col gap-3">
 	{#if interactive}
 		<div class="flex items-center justify-between text-xs text-muted-foreground">
-			<span class="font-medium tracking-[0.2em] uppercase">Plano </span>
+			<span class="font-medium">Plano </span>
 			<span class="rounded-full bg-muted px-2 py-0.5 text-[10px]">Click o flechas para mover</span>
 		</div>
 		<button
@@ -855,9 +855,6 @@
 			{/if}
 		</button>
 	{:else}
-		<div class="flex items-center justify-between text-xs text-muted-foreground">
-			<span class="font-medium tracking-[0.2em] uppercase">Plano (Puedes acercarte y moverte)</span>
-		</div>
 		<div class={wrapperBaseClass} role="img" aria-label={label} aria-describedby={describedBy}>
 			<svg
 				bind:this={svgEl}
@@ -1007,19 +1004,9 @@
 			{/if}
 		</div>
 	{/if}
-	<div class="flex items-center justify-between text-xs text-muted-foreground">
-		<span>
-			x = <span class="font-medium text-foreground">{x.toFixed(2)}</span>
-		</span>
-		<span>
-			y = <span class="font-medium text-foreground">{y.toFixed(2)}</span>
-		</span>
-	</div>
 	{#if !singlePointMode && nearestParties.length > 0}
 		<div class="rounded-2xl border border-border/70 bg-card/80 p-3 text-xs text-muted-foreground">
-			<span class="mb-2 block font-medium tracking-[0.2em] text-foreground uppercase"
-				>Partidos más cercanos</span
-			>
+			<span class="mb-2 block font-medium text-foreground">Partidos más cercanos</span>
 			<ul class="space-y-1">
 				{#each nearestParties as party, index}
 					{@const slug = party.point.slug ?? null}

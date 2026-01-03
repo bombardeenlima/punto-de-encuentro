@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { Button } from '$lib';
-	import {
-		Accordion,
-		AccordionContent,
-		AccordionItem,
-		AccordionTrigger
-	} from '$lib/components/ui/accordion';
+	import { ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	const { data } = $props<{ data: PageData }>();
 
 	const topics = data.topics;
 	const filteredTopics = topics
@@ -20,69 +15,91 @@
 			})
 		}))
 		.filter((topic) => topic.parties.length > 0);
+
+	let expandedTopics = $state<Set<string>>(new Set());
+
+	function toggleTopic(tema: string) {
+		const newExpanded = new Set(expandedTopics);
+		if (newExpanded.has(tema)) {
+			newExpanded.delete(tema);
+		} else {
+			newExpanded.add(tema);
+		}
+		expandedTopics = newExpanded;
+	}
 </script>
 
-<main
-	id="main-content"
-	class="mx-auto flex min-h-screen max-w-5xl flex-col gap-10 px-6 py-16 sm:px-10"
-	aria-labelledby="topics-title"
-	aria-describedby="topics-description"
->
-	<div class="flex justify-center sm:justify-start">
-		<Button
-			variant="ghost"
-			href="/"
-			class="flex w-fit items-center gap-2 px-0 text-sm text-muted-foreground hover:text-foreground"
-		>
-			<span aria-hidden="true">←</span>
-			<span>Ir al Inicio</span>
-		</Button>
+<div class="mx-auto max-w-5xl px-6 py-16">
+	<div class="mb-12 flex items-start justify-between">
+		<div>
+			<Button
+				variant="ghost"
+				href="/"
+				class="mb-6 flex w-fit items-center gap-2 px-0 text-sm text-muted-foreground hover:text-foreground"
+			>
+				<span aria-hidden="true">←</span>
+				<span>Ir al Inicio</span>
+			</Button>
+			<h1
+				id="topics-title"
+				class="mb-4 text-5xl leading-tight font-bold tracking-tight text-foreground"
+			>
+				Posiciones de los partidos
+			</h1>
+			<p id="topics-description" class="max-w-2xl text-lg text-muted-foreground">
+				Explorá cómo se posiciona cada partido frente a los temas que marcan la agenda pública.
+			</p>
+		</div>
 	</div>
-	<header class="space-y-4 text-center sm:text-left">
-		<h1 id="topics-title" class="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-			Posiciones de los partidos
-		</h1>
-		<p id="topics-description" class="mx-auto max-w-2xl text-pretty text-muted-foreground sm:mx-0">
-			Explorá cómo se posiciona cada partido frente a los temas que marcan la agenda pública.
-		</p>
-	</header>
 
 	{#if filteredTopics.length > 0}
-		<Accordion
-			type="multiple"
-			class="rounded-lg border border-border/70 bg-background/95"
-			aria-label="Temas y posiciones de los partidos"
-			aria-labelledby="topics-title"
-			aria-describedby="topics-description"
-		>
+		<div class="space-y-3">
 			{#each filteredTopics as topic}
-				<AccordionItem value={topic.tema}>
-					<AccordionTrigger
-						class="px-4 py-3 text-base font-semibold text-foreground sm:px-6"
-						level={2}
+				{@const isExpanded = expandedTopics.has(topic.tema)}
+				<div class="overflow-hidden rounded-md border border-border bg-card transition-all">
+					<button
+						onclick={() => toggleTopic(topic.tema)}
+						class="group flex w-full items-center justify-between p-6 text-left transition-all hover:bg-accent/50"
+						aria-expanded={isExpanded}
 					>
-						{topic.tema}
-					</AccordionTrigger>
-					<AccordionContent class="space-y-4 px-4 pt-4 pb-6 text-sm text-muted-foreground">
-						<ul class="space-y-3" aria-label={`Posiciones de partidos sobre ${topic.tema}`}>
-							{#each topic.parties as party}
-								<li class="rounded-md border border-border/60 bg-muted/40 p-4 sm:p-6">
-									<h3 class="text-sm font-semibold text-foreground">
-										{party.displayName}
-									</h3>
-									<p class="mt-2 text-sm text-muted-foreground">
-										{party.postura}
-									</p>
-								</li>
-							{/each}
-						</ul>
-					</AccordionContent>
-				</AccordionItem>
+						<div class="flex-1">
+							<h2 class="text-xl font-semibold text-foreground">
+								{topic.tema}
+							</h2>
+							<p class="mt-1 text-sm text-muted-foreground">
+								{topic.parties.length}
+								{topic.parties.length === 1 ? 'posición' : 'posiciones'}
+							</p>
+						</div>
+						<ChevronDown
+							class="h-5 w-5 text-muted-foreground transition-transform {isExpanded
+								? 'rotate-180'
+								: ''}"
+						/>
+					</button>
+
+					{#if isExpanded}
+						<div class="border-t border-border bg-background/50 p-6">
+							<div class="grid gap-4 sm:grid-cols-2">
+								{#each topic.parties as party}
+									<div class="rounded-md border border-border bg-card p-5">
+										<h3 class="mb-2 font-semibold text-foreground">
+											{party.displayName}
+										</h3>
+										<p class="text-sm leading-relaxed text-muted-foreground">
+											{party.postura}
+										</p>
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/if}
+				</div>
 			{/each}
-		</Accordion>
+		</div>
 	{:else}
-		<p class="text-center text-muted-foreground sm:text-left">
-			Aún no hay posiciones registradas. Volvé pronto.
-		</p>
+		<div class="rounded-md border border-dashed border-border bg-card/30 p-12 text-center">
+			<p class="text-muted-foreground">Aún no hay posiciones registradas. Volvé pronto.</p>
+		</div>
 	{/if}
-</main>
+</div>

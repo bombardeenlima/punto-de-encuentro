@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { Button, Card, CardContent, CardHeader, CardTitle, CartesianPlane } from '$lib';
+	import { Button, CartesianPlane } from '$lib';
+	import { Mail, Globe, Facebook, Twitter } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	type Profile = PageData['profile'];
 	type InfoItem = { label: string; value: string };
-	type LinkItem = { label: string; href: string; isExternal: boolean };
+	type LinkItem = { label: string; href: string; isExternal: boolean; icon?: any };
 	type Coordinates = PageData['coordinates'];
 	type PlanePoint = {
 		x: number;
@@ -21,7 +22,7 @@
 		description: string;
 	};
 
-	export let data: PageData;
+	const { data } = $props<{ data: PageData }>();
 
 	const profile = data.profile;
 	const coordinates: Coordinates = data.coordinates;
@@ -82,26 +83,31 @@
 	}, []);
 
 	const contactFields = [
-		{ key: 'correo', label: 'Correo', type: 'mailto' as const },
-		{ key: 'web', label: 'Sitio web', type: 'link' as const },
-		{ key: 'facebook', label: 'Facebook', type: 'link' as const },
-		{ key: 'twitter', label: 'Twitter', type: 'link' as const }
-	] as const satisfies readonly { key: keyof Profile; label: string; type: 'link' | 'mailto' }[];
+		{ key: 'correo', label: 'Correo', type: 'mailto' as const, icon: Mail },
+		{ key: 'web', label: 'Sitio web', type: 'link' as const, icon: Globe },
+		{ key: 'facebook', label: 'Facebook', type: 'link' as const, icon: Facebook },
+		{ key: 'twitter', label: 'Twitter', type: 'link' as const, icon: Twitter }
+	] as const satisfies readonly {
+		key: keyof Profile;
+		label: string;
+		type: 'link' | 'mailto';
+		icon: any;
+	}[];
 
-	const contactItems = contactFields.reduce<LinkItem[]>((acc, { key, label, type }) => {
+	const contactItems = contactFields.reduce<LinkItem[]>((acc, { key, label, type, icon }) => {
 		const raw = profile[key] as string | undefined;
 		const value = maybeText(raw);
 		if (!value) return acc;
 
 		if (type === 'mailto') {
 			if (value.includes('@')) {
-				acc.push({ label, href: `mailto:${value}`, isExternal: false });
+				acc.push({ label, href: `mailto:${value}`, isExternal: false, icon });
 			}
 			return acc;
 		}
 
 		if (!isHttpUrl(value)) return acc;
-		acc.push({ label, href: value, isExternal: true });
+		acc.push({ label, href: value, isExternal: true, icon });
 		return acc;
 	}, []);
 </script>
@@ -110,34 +116,32 @@
 	<title>{profile.nombre} | Perfiles de partidos</title>
 </svelte:head>
 
-<main
-	id="main-content"
-	class="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-6 py-16 sm:px-10"
->
+<div class="mx-auto max-w-6xl px-6 py-16">
 	<Button
 		variant="ghost"
 		href="/perfiles"
-		class="w-fit px-0 text-sm text-muted-foreground hover:text-foreground"
+		class="mb-8 flex w-fit items-center gap-2 px-0 text-sm text-muted-foreground hover:text-foreground"
 	>
 		<span aria-hidden="true">←</span>
 		<span>Volver a los perfiles</span>
 	</Button>
 
-	<Card class="overflow-hidden border border-border/70 bg-background/95">
-		<CardHeader class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-			<div class="space-y-2">
-				<p class="text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+	<!-- Hero Section -->
+	<div class="mb-12 overflow-hidden rounded-md border border-border bg-card">
+		<div class="flex flex-col gap-6 p-8 sm:flex-row sm:items-start sm:justify-between">
+			<div class="flex-1">
+				<p class="text-xs font-semibold text-muted-foreground">
 					{profile.partido}
 				</p>
-				<CardTitle class="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+				<h1
+					class="mt-2 text-4xl leading-tight font-bold tracking-tight text-foreground sm:text-5xl"
+				>
 					{profile.nombre}
-				</CardTitle>
+				</h1>
 			</div>
 
 			{#if profile.logoUrl}
-				<div
-					class="flex h-28 w-40 items-center justify-center overflow-hidden rounded-lg border border-dashed border-border/60 bg-muted/40 p-3"
-				>
+				<div class="flex h-24 w-32 items-center justify-center rounded-md bg-muted/50 p-4">
 					<img
 						src={profile.logoUrl}
 						alt={`Logo de ${profile.nombre}`}
@@ -145,88 +149,91 @@
 					/>
 				</div>
 			{/if}
-		</CardHeader>
-	</Card>
+		</div>
 
-	{#if coordinates}
-		<section class="space-y-3">
-			<h2 class="text-xl font-semibold text-foreground">Ubicación en el plano</h2>
-			<CartesianPlane
-				x={coordinates.x}
-				y={coordinates.y}
-				label={`Plano de ${profile.nombre}`}
-				points={planePoints}
-				singlePointMode
-				bind:narrative={planeNarrative}
-			/>
-			<div
-				class="rounded-2xl border border-border/70 bg-background/95 p-4 text-sm text-muted-foreground"
-			>
-				<p class="text-foreground">
-					<span class="font-semibold">Coordenadas:</span>
-					{formattedCoordinates}
-				</p>
-				{#if planeNarrative}
-					<div class="mt-3 space-y-1">
-						<p class="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
-							{planeNarrative.heading}
+		{#if coordinates}
+			<div class="border-t border-border bg-background/50 p-6">
+				<div class="flex items-center gap-4">
+					<div class="flex-1">
+						<p class="text-sm font-semibold text-foreground">Coordenadas</p>
+						<p class="text-2xl font-bold text-foreground">
+							({coordinates.x.toFixed(2)}, {coordinates.y.toFixed(2)})
 						</p>
-						<p class="font-semibold text-foreground">{planeNarrative.title}</p>
-						<p>{planeNarrative.description}</p>
 					</div>
-				{/if}
+					{#if planeNarrative}
+						<div class="flex-1 text-sm">
+							<p class="font-semibold text-foreground">{planeNarrative.title}</p>
+							<p class="text-muted-foreground">{planeNarrative.description}</p>
+						</div>
+					{/if}
+				</div>
 			</div>
-		</section>
-	{:else}
-		<section
-			class="rounded-2xl border border-dashed border-border/60 bg-background/60 p-4 text-sm text-muted-foreground"
-		>
-			No hay coordenadas disponibles para este partido.
-		</section>
-	{/if}
+		{/if}
+	</div>
 
+	<!-- Main Content Grid -->
+	<div class="grid gap-8 lg:grid-cols-[2fr_1fr]">
+		<!-- Left Column: Plane -->
+		<div>
+			{#if coordinates}
+				<section>
+					<h2 class="mb-4 text-2xl font-semibold text-foreground">Ubicación en el plano</h2>
+					<div class="overflow-hidden rounded-md border border-border bg-card">
+						<CartesianPlane
+							x={coordinates.x}
+							y={coordinates.y}
+							label={`Plano de ${profile.nombre}`}
+							points={planePoints}
+							singlePointMode
+							bind:narrative={planeNarrative}
+						/>
+					</div>
+				</section>
+			{/if}
+		</div>
+
+		<!-- Right Column: Contact -->
+		<div>
+			{#if contactItems.length > 0}
+				<section>
+					<h2 class="mb-4 text-xl font-semibold text-foreground">Contacto</h2>
+					<div class="space-y-2">
+						{#each contactItems as item}
+							<a
+								href={item.href}
+								target={item.isExternal ? '_blank' : undefined}
+								rel={item.isExternal ? 'noreferrer' : undefined}
+								class="flex items-center gap-3 rounded-md border border-border bg-card p-4 transition-all hover:bg-accent/50"
+							>
+								{#if item.icon}
+									<svelte:component this={item.icon} class="h-5 w-5 text-muted-foreground" />
+								{/if}
+								<span class="flex-1 text-sm font-medium text-foreground">{item.label}</span>
+								<span class="text-muted-foreground">{item.isExternal ? '↗' : '→'}</span>
+							</a>
+						{/each}
+					</div>
+				</section>
+			{/if}
+		</div>
+	</div>
+
+	<!-- Full Width: Party Information -->
 	{#if infoItems.length > 0}
-		<section class="space-y-4">
-			<h2 class="text-xl font-semibold text-foreground">Ficha del partido</h2>
-			<div class="grid gap-4 sm:grid-cols-2">
+		<section class="mt-8">
+			<h2 class="mb-4 text-2xl font-semibold text-foreground">Información del partido</h2>
+			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				{#each infoItems as item}
-					<Card class="h-full border border-border/70 bg-background/95">
-						<CardHeader class="space-y-1">
-							<p class="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
-								{item.label}
-							</p>
-						</CardHeader>
-						<CardContent>
-							<p class="text-base break-words whitespace-pre-wrap text-foreground">{item.value}</p>
-						</CardContent>
-					</Card>
+					<div class="rounded-md border border-border bg-card p-5">
+						<p class="mb-2 text-xs font-semibold text-muted-foreground">
+							{item.label}
+						</p>
+						<p class="text-sm leading-relaxed break-words whitespace-pre-wrap text-foreground">
+							{item.value}
+						</p>
+					</div>
 				{/each}
 			</div>
 		</section>
 	{/if}
-
-	{#if contactItems.length > 0}
-		<section class="space-y-3">
-			<h2 class="text-xl font-semibold text-foreground">Contacto y enlaces</h2>
-			<ul class="grid gap-3 sm:grid-cols-2">
-				{#each contactItems as item}
-					<li>
-						<Card class="border border-border/70 bg-background/95">
-							<CardContent class="p-4">
-								<a
-									href={item.href}
-									class="inline-flex w-full items-center justify-between gap-3 text-sm font-medium text-primary transition hover:text-primary/80"
-									target={item.isExternal ? '_blank' : undefined}
-									rel={item.isExternal ? 'noreferrer' : undefined}
-								>
-									<span class="truncate">{item.label}</span>
-									<span class="text-xs text-muted-foreground">{item.isExternal ? '↗' : '→'}</span>
-								</a>
-							</CardContent>
-						</Card>
-					</li>
-				{/each}
-			</ul>
-		</section>
-	{/if}
-</main>
+</div>
