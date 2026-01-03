@@ -5,16 +5,18 @@
 
 	const { data } = $props<{ data: PageData }>();
 
-	const topics = data.topics;
-	const filteredTopics = topics
-		.map((topic) => ({
-			...topic,
-			parties: topic.parties.filter((party) => {
-				const postura = party.postura?.trim();
-				return postura && postura.length > 0;
-			})
-		}))
-		.filter((topic) => topic.parties.length > 0);
+	const topics = $derived(data.topics);
+	const filteredTopics = $derived(
+		topics
+			.map((topic) => ({
+				...topic,
+				parties: topic.parties.filter((party) => {
+					const postura = party.postura?.trim();
+					return postura && postura.length > 0;
+				})
+			}))
+			.filter((topic) => topic.parties.length > 0)
+	);
 
 	let expandedTopics = $state<Set<string>>(new Set());
 

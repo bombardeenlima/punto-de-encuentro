@@ -7,7 +7,7 @@
 
 	const { data } = $props<{ data: PageData }>();
 
-	const profiles: DisplayProfile[] = data.profiles;
+	const profiles = $derived(data.profiles);
 
 	const slugify = (value: string) =>
 		value
@@ -17,16 +17,18 @@
 			.replace(/[^a-z0-9]+/g, '-')
 			.replace(/^-+|-+$/g, '');
 
-	const profilesWithMetadata = profiles.map((profile, index) => {
-		const base = profile.partido ?? profile.nombre;
-		const slug = slugify(base);
-		const headingId = `profile-${slug || index}`;
-		return {
-			...profile,
-			headingId,
-			href: `/perfiles/${encodeURIComponent(profile.partido ?? profile.nombre)}`
-		};
-	});
+	const profilesWithMetadata = $derived(
+		profiles.map((profile, index) => {
+			const base = profile.partido ?? profile.nombre;
+			const slug = slugify(base);
+			const headingId = `profile-${slug || index}`;
+			return {
+				...profile,
+				headingId,
+				href: `/perfiles/${encodeURIComponent(profile.partido ?? profile.nombre)}`
+			};
+		})
+	);
 </script>
 
 <div class="mx-auto max-w-5xl px-6 py-16">

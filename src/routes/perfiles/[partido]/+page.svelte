@@ -24,8 +24,8 @@
 
 	const { data } = $props<{ data: PageData }>();
 
-	const profile = data.profile;
-	const coordinates: Coordinates = data.coordinates;
+	const profile = $derived(data.profile);
+	const coordinates = $derived<Coordinates>(data.coordinates);
 
 	const maybeText = (value: string | undefined | null) => {
 		if (typeof value !== 'string') return null;
@@ -33,24 +33,26 @@
 		return trimmed.length > 0 ? trimmed : null;
 	};
 
-	const highlightedPoint: PlanePoint | null = coordinates
-		? {
-				x: coordinates.x,
-				y: coordinates.y,
-				label: profile.nombre,
-				slug: encodeURIComponent(profile.partido),
-				color: 'var(--color-primary)',
-				isUser: true
-			}
-		: null;
+	const highlightedPoint = $derived<PlanePoint | null>(
+		coordinates
+			? {
+					x: coordinates.x,
+					y: coordinates.y,
+					label: profile.nombre,
+					slug: encodeURIComponent(profile.partido),
+					color: 'var(--color-primary)',
+					isUser: true
+				}
+			: null
+	);
 
-	const planePoints = highlightedPoint ? [highlightedPoint] : [];
+	const planePoints = $derived(highlightedPoint ? [highlightedPoint] : []);
 
-	const formattedCoordinates = coordinates
-		? `(${coordinates.x.toFixed(2)}, ${coordinates.y.toFixed(2)})`
-		: null;
+	const formattedCoordinates = $derived(
+		coordinates ? `(${coordinates.x.toFixed(2)}, ${coordinates.y.toFixed(2)})` : null
+	);
 
-	let planeNarrative: QuadrantNarrative | null = null;
+	let planeNarrative = $state<QuadrantNarrative | null>(null);
 
 	const isHttpUrl = (value: string) => /^https?:\/\//i.test(value);
 
@@ -206,7 +208,8 @@
 								class="flex items-center gap-3 rounded-md border border-border bg-card p-4 transition-all hover:bg-accent/50"
 							>
 								{#if item.icon}
-									<svelte:component this={item.icon} class="h-5 w-5 text-muted-foreground" />
+									{@const Icon = item.icon}
+									<Icon class="h-5 w-5 text-muted-foreground" />
 								{/if}
 								<span class="flex-1 text-sm font-medium text-foreground">{item.label}</span>
 								<span class="text-muted-foreground">{item.isExternal ? '↗' : '→'}</span>

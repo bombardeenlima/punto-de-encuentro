@@ -4,9 +4,9 @@
 	import type { PageData } from './$types';
 
 	const { data } = $props<{ data: PageData }>();
-	const questions = data.questions;
-	const parties = data.parties ?? [];
-	const partyProfiles = data.partyProfiles ?? [];
+	const questions = $derived(data.questions);
+	const parties = $derived(data.parties ?? []);
+	const partyProfiles = $derived(data.partyProfiles ?? []);
 
 	type LoadedQuestion = (typeof questions)[number];
 	type PlotPoint = {

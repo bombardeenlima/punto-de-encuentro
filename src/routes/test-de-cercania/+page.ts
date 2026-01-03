@@ -1,12 +1,17 @@
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '$convex/_generated/api';
-import { PUBLIC_CONVEX_URL } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 import type { PageLoad } from './$types';
 
 export const ssr = true;
 
 export const load: PageLoad = async () => {
-	const client = new ConvexHttpClient(PUBLIC_CONVEX_URL);
+	const convexUrl = env.PUBLIC_CONVEX_URL;
+	if (!convexUrl) {
+		throw new Error('Missing required public env var: PUBLIC_CONVEX_URL');
+	}
+
+	const client = new ConvexHttpClient(convexUrl);
 	const [questions, parties, partyProfiles] = await Promise.all([
 		client.query(api.questions.list, {}),
 		client.query(api.parties.list, {}),
