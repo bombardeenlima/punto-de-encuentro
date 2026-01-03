@@ -3,6 +3,7 @@
   "compatibility_date": "2026-01-03",
   "main": ".svelte-kit/output/server/index.js",
   "assets": {
-    "directory": ".svelte-kit/output/client"
+    "directory": ".svelte-kit/output/client",
+    "binding": "ASSETS"
   }
 }
