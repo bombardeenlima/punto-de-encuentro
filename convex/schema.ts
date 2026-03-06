@@ -2,16 +2,6 @@ import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 
 export default defineSchema({
-	afirmaciones: defineTable({
-		n: v.number(),
-		eje: v.string(),
-		criterio: v.string(),
-		pregunta: v.string()
-	})
-		.index('by_n', ['n'])
-		.index('by_eje', ['eje'])
-		.index('by_criterio', ['criterio']),
-
 	partidos: defineTable({
 		partido: v.string(),
 		coordenadas: v.array(v.number())

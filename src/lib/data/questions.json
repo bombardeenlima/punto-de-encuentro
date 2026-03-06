@@ -1,0 +1,198 @@
+[
+  {
+    "_id": "q1_seguridad_libertades",
+    "n": 2,
+    "eje": "1",
+    "criterio": "seguridad",
+    "pregunta": "Considero que, para frenar la ola de extorsiones y sicariato, el gobierno debería tener la facultad de suspender libertades por tiempo indefinido."
+  },
+  {
+    "_id": "q2_matrimonio_igualitario",
+    "n": 2,
+    "eje": "1",
+    "criterio": "derechos-civiles",
+    "pregunta": "Considero que el matrimonio o unión civil entre personas del mismo sexo debería ser reconocido plenamente por la ley."
+  },
+  {
+    "_id": "q3_estado_laico",
+    "n": 2,
+    "eje": "1",
+    "criterio": "laicidad",
+    "pregunta": "Considero que las leyes y políticas públicas deben realizarse sin influencia de creencias religiosas o la Iglesia."
+  },
+  {
+    "_id": "q4_libertad_estilo_vida",
+    "n": 2,
+    "eje": "1",
+    "criterio": "libertades-individuales",
+    "pregunta": "Considero que, mientras mis acciones no dañen directamente a terceros, el Estado no tiene derecho a intervenir en mi estilo de vida, lo que consumo o con quién me relaciono."
+  },
+  {
+    "_id": "q5_mano_dura",
+    "n": 2,
+    "eje": "1",
+    "criterio": "seguridad",
+    "pregunta": "Preferiría un gobierno de \"mano dura\" que elimine la delincuencia, aunque limitara la independencia de poderes o ciertos derechos humanos."
+  },
+  {
+    "_id": "q6_educacion_sexual_familia",
+    "n": 2,
+    "eje": "1",
+    "criterio": "educacion",
+    "pregunta": "Preferiría que la educación sexual de los niños dependa exclusivamente de la familia y no del Estado (escuelas y centros de estudios)."
+  },
+  {
+    "_id": "q7_pena_muerte",
+    "n": 2,
+    "eje": "1",
+    "criterio": "justicia-penal",
+    "pregunta": "Se debería aplicar la pena de muerte en el Perú."
+  },
+  {
+    "_id": "q8_militares_calles",
+    "n": 2,
+    "eje": "1",
+    "criterio": "seguridad",
+    "pregunta": "Se debería encargar a los militares el control permanente del orden interno y el patrullaje de las calles ante la crisis de inseguridad."
+  },
+  {
+    "_id": "q9_represion_protestas",
+    "n": 2,
+    "eje": "1",
+    "criterio": "protesta-social",
+    "pregunta": "Se debería reprimir inmediatamente las protestas, priorizando el orden público."
+  },
+  {
+    "_id": "q10_aborto_libre",
+    "n": 2,
+    "eje": "1",
+    "criterio": "derechos-reproductivos",
+    "pregunta": "Se debería permitir la interrupción voluntaria del embarazo por decisión libre de la mujer."
+  },
+  {
+    "_id": "q11_mas_impuestos_ricos",
+    "n": 2,
+    "eje": "0",
+    "criterio": "redistribucion",
+    "pregunta": "Considero que el Estado debe cobrar más impuestos a quienes más tienen para financiar programas sociales y obras en las zonas más pobres del país."
+  },
+  {
+    "_id": "q12_impuestos_grandes_empresas",
+    "n": 2,
+    "eje": "0",
+    "criterio": "tributacion",
+    "pregunta": "Considero que las grandes empresas deben pagar todos sus impuestos sin recibir beneficios especiales ni descuentos, para que el Estado tenga más dinero para obras y servicios públicos."
+  },
+  {
+    "_id": "q13_recursos_estado",
+    "n": 2,
+    "eje": "0",
+    "criterio": "recursos-naturales",
+    "pregunta": "Preferiría que los recursos naturales del Perú (como el gas de Camisea, el oro y el cobre) sean manejados directamente por empresas del Estado en lugar de ser entregados a empresas privadas."
+  },
+  {
+    "_id": "q14_pensiones_estado",
+    "n": 2,
+    "eje": "0",
+    "criterio": "pensiones",
+    "pregunta": "Considero que el Estado debería ser el principal encargado de administrar las pensiones en el Perú, en lugar de empresas privadas."
+  },
+  {
+    "_id": "q15_privados_electricidad_gas_mineria",
+    "n": 2,
+    "eje": "0",
+    "criterio": "privatizacion",
+    "pregunta": "Considero que sectores como la electricidad, el gas y la minería deberían estar principalmente en manos de empresas privadas, y no del Estado."
+  },
+  {
+    "_id": "q16_extractivismo_empleo",
+    "n": 2,
+    "eje": "0",
+    "criterio": "extractivismo",
+    "pregunta": "Se debería priorizar los proyectos mineros o extractivos que generan empleo e ingresos, aunque eso implique un mayor impacto en el medio ambiente."
+  },
+  {
+    "_id": "q17_servicios_basicos_privados",
+    "n": 2,
+    "eje": "0",
+    "criterio": "servicios-basicos",
+    "pregunta": "Considero que los servicios básicos (agua, luz, internet) deberían ser brindados solamente por empresas privadas (como Telefónica, Enel o Luz del Sur) y no por el Estado."
+  },
+  {
+    "_id": "q18_cerrar_congreso",
+    "n": 2,
+    "eje": "1",
+    "criterio": "instituciones",
+    "pregunta": "Considero que, si el Congreso obstaculiza al Presidente, se justifica cerrarlo para avanzar."
+  },
+  {
+    "_id": "q19_cambios_policia",
+    "n": 2,
+    "eje": "1",
+    "criterio": "seguridad",
+    "pregunta": "Considero que se necesitan cambios radicales en la policía para que el país mejore."
+  },
+  {
+    "_id": "q20_nueva_constitucion",
+    "n": 2,
+    "eje": "0",
+    "criterio": "instituciones",
+    "pregunta": "Considero que para solucionar los problemas del país es necesario reemplazar totalmente la Constitución actual por una nueva."
+  },
+  {
+    "_id": "q21_no_reeleccion_politicos",
+    "n": 2,
+    "eje": "1",
+    "criterio": "reforma-politica",
+    "pregunta": "Se debería prohibir que los políticos que ya han estado en el poder vuelvan a postular, para limpiar el sistema."
+  },
+  {
+    "_id": "q22_bajar_sueldo_congresistas",
+    "n": 2,
+    "eje": "0",
+    "criterio": "reforma-politica",
+    "pregunta": "Se debería reducir el sueldo de los congresistas para que solo personas con verdadera vocación de servicio ocupen esos cargos."
+  },
+  {
+    "_id": "q23_reinfo_formalizacion",
+    "n": 2,
+    "eje": "0",
+    "criterio": "mineria-informal",
+    "pregunta": "Se debería permitir que los mineros informales sigan operando mientras tramitan su formalización (REINFO), incluso si todavía no cumplen con todos los requisitos ambientales."
+  },
+  {
+    "_id": "q24_asilo_peligro_justicia",
+    "n": 2,
+    "eje": "1",
+    "criterio": "justicia-internacional",
+    "pregunta": "Considero que el asilo político (protección que un país otorga a una persona perseguida por razones políticas para que pueda vivir allí sin ser devuelta a su país) es un peligro para el sistema de justicia nacional."
+  },
+  {
+    "_id": "q25_tlc_beneficiosos",
+    "n": 2,
+    "eje": "0",
+    "criterio": "comercio-exterior",
+    "pregunta": "Considero que los TLC (tratados de libre comercio) son beneficiosos para el país aunque hagan que los productores nacionales compitan con empresas extranjeras."
+  },
+  {
+    "_id": "q26_restringir_extraccion_extranjera_a",
+    "n": 2,
+    "eje": "0",
+    "criterio": "recursos-extranjeros",
+    "pregunta": "El Estado debería restringir la extracción de recursos naturales (minería o energía) por parte de empresas extranjeras."
+  },
+  {
+    "_id": "q27_restringir_extraccion_extranjera_b",
+    "n": 2,
+    "eje": "0",
+    "criterio": "recursos-extranjeros",
+    "pregunta": "El Estado debería restringir la extracción de recursos naturales (minería o energía) por parte de empresas extranjeras."
+  },
+  {
+    "_id": "q28_ley_peruana_sobre_internacional",
+    "n": 2,
+    "eje": "1",
+    "criterio": "soberania",
+    "pregunta": "La ley peruana debería estar por encima de los acuerdos internacionales aunque esto implique abandonar organismos de derechos humanos."
+  }
+]

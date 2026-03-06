@@ -2,8 +2,18 @@ import { ConvexHttpClient } from 'convex/browser';
 import { api } from '$convex/_generated/api';
 import { env } from '$env/dynamic/public';
 import type { PageLoad } from './$types';
+import localQuestions from '$lib/data/questions.json';
 
 export const ssr = true;
+
+const shuffleQuestions = <T>(items: readonly T[]) => {
+	const shuffled = [...items];
+	for (let index = shuffled.length - 1; index > 0; index -= 1) {
+		const swapIndex = Math.floor(Math.random() * (index + 1));
+		[shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+	}
+	return shuffled;
+};
 
 export const load: PageLoad = async () => {
 	const convexUrl = env.PUBLIC_CONVEX_URL;
@@ -12,15 +22,10 @@ export const load: PageLoad = async () => {
 	}
 
 	const client = new ConvexHttpClient(convexUrl);
-	const [questions, parties, partyProfiles] = await Promise.all([
-		client.query(api.questions.list, {}),
-		client.query(api.parties.list, {}),
-		client.query(api.partyProfiles.list, {})
-	]);
+	const parties = await client.query(api.parties.list, {});
 
 	return {
-		questions,
-		parties,
-		partyProfiles
+		questions: shuffleQuestions(localQuestions),
+		parties
 	};
 };

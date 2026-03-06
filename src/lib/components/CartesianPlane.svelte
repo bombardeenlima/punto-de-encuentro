@@ -20,7 +20,6 @@
 		isUser?: boolean;
 		color?: string;
 		id?: string;
-		slug?: string;
 	};
 
 	type HoveredPoint = {
@@ -40,7 +39,6 @@
 		dist: number;
 	};
 
-	type PointActivateDetail = { point: PlanePoint };
 	type HorizontalAlignment = 'left' | 'right';
 	type VerticalAlignment = 'authoritarian' | 'libertarian';
 	type IntensityLevel = 'high' | 'moderate';
@@ -52,7 +50,6 @@
 
 	const dispatch = createEventDispatcher<{
 		select: SelectDetail;
-		pointActivate: PointActivateDetail;
 	}>();
 
 	let {
@@ -492,24 +489,6 @@
 		hovered = null;
 	}
 
-	function handlePointActivate(point: PlanePoint) {
-		if (point.isUser) return;
-		dispatch('pointActivate', { point });
-	}
-
-	let lastClick = $state<{ key: string; time: number } | null>(null);
-
-	function handlePointClick(point: PlanePoint, key: string) {
-		if (point.isUser) return;
-		const now = Date.now();
-		if (lastClick && lastClick.key === key && now - lastClick.time <= 500) {
-			handlePointActivate(point);
-			lastClick = null;
-			return;
-		}
-		lastClick = { key, time: now };
-	}
-
 	type ZoomFocus = {
 		fx: number;
 		fy: number;
@@ -791,7 +770,6 @@
 							role="presentation"
 							onmouseenter={() => showHover(point, index)}
 							onmouseleave={clearHover}
-							onclick={() => handlePointClick(point, pointKey)}
 						>
 							{#if point.label}
 								<title>{point.label}</title>
@@ -969,7 +947,6 @@
 						role="presentation"
 						onmouseenter={() => showHover(point, index)}
 						onmouseleave={clearHover}
-						onclick={() => handlePointClick(point, pointKey)}
 					>
 						{#if point.label}
 							<title>{point.label}</title>
@@ -1009,15 +986,8 @@
 			<span class="mb-2 block font-medium text-foreground">Partidos más cercanos</span>
 			<ul class="space-y-1">
 				{#each nearestParties as party, index}
-					{@const slug = party.point.slug ?? null}
 					<li class="flex items-center justify-between">
-						{#if slug}
-							<a class="text-foreground transition hover:text-primary" href={`/perfiles/${slug}`}>
-								{index + 1}. {party.point.label ?? 'Sin nombre'}
-							</a>
-						{:else}
-							<span class="text-foreground">{index + 1}. {party.point.label ?? 'Sin nombre'}</span>
-						{/if}
+						<span class="text-foreground">{index + 1}. {party.point.label ?? 'Sin nombre'}</span>
 						<span>{formatDistance(party.distance)}</span>
 					</li>
 				{/each}
