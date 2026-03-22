@@ -1,0 +1,64 @@
+
+> punto-de-encuentro@0.0.1 build
+> vite build
+
+vite v8.0.1 building ssr environment for production...
+[2Ktransforming...✓ 3664 modules transformed.
+rendering chunks...
+vite v8.0.1 building client environment for production...
+[2Ktransforming...✓ 3677 modules transformed.
+rendering chunks...
+computing gzip size...
+.svelte-kit/output/client/_app/version.json                        0.02 kB │ gzip:  0.04 kB
+.svelte-kit/output/client/.vite/manifest.json                      2.73 kB │ gzip:  0.54 kB
+.svelte-kit/output/client/_app/immutable/assets/0.rYhJ7t6s.css    36.61 kB │ gzip:  6.87 kB
+.svelte-kit/output/client/_app/immutable/chunks/D3Qc1DbC.js        0.03 kB │ gzip:  0.05 kB
+.svelte-kit/output/client/_app/immutable/chunks/DEDqjojZ.js        0.06 kB │ gzip:  0.08 kB
+.svelte-kit/output/client/_app/immutable/nodes/1.1D6SUkk6.js       0.92 kB │ gzip:  0.59 kB
+.svelte-kit/output/client/_app/immutable/chunks/Dj6f-nJM.js        1.20 kB │ gzip:  0.68 kB
+.svelte-kit/output/client/_app/immutable/nodes/0.BS7Ad7ZZ.js       2.72 kB │ gzip:  1.19 kB
+.svelte-kit/output/client/_app/immutable/entry/app.BYSI4r4H.js     2.86 kB │ gzip:  1.29 kB
+.svelte-kit/output/client/_app/immutable/nodes/2.RIRJK_6x.js       3.67 kB │ gzip:  1.64 kB
+.svelte-kit/output/client/_app/immutable/nodes/3.CjOLq8r5.js       9.75 kB │ gzip:  4.03 kB
+.svelte-kit/output/client/_app/immutable/entry/start.CVVLbMzO.js  30.76 kB │ gzip: 11.83 kB
+.svelte-kit/output/client/_app/immutable/chunks/DjvHa1J7.js       38.34 kB │ gzip: 12.25 kB
+.svelte-kit/output/client/_app/immutable/chunks/CuMOaAzi.js       51.09 kB │ gzip: 19.56 kB
+
+[33m[PLUGIN_TIMINGS] Warning:[0m Your build spent significant time in plugins. Here is a breakdown:
+  - vite-plugin-sveltekit-guard (80%)
+  - vite-plugin-sveltekit-virtual-modules (10%)
+  - vite-plugin-svelte:compile (8%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+
+✓ built in 4.72s
+computing gzip size...
+.svelte-kit/output/server/.vite/manifest.json                                  3.19 kB │ gzip:  0.53 kB
+.svelte-kit/output/server/_app/immutable/assets/_layout.B25S4IfZ.css          36.49 kB │ gzip:  6.86 kB
+.svelte-kit/output/server/chunks/index-server.js                               0.23 kB │ gzip:  0.17 kB
+.svelte-kit/output/server/internal.js                                          0.47 kB │ gzip:  0.21 kB
+.svelte-kit/output/server/entries/pages/_error.svelte.js                       1.07 kB │ gzip:  0.58 kB
+.svelte-kit/output/server/chunks/environment.js                                1.21 kB │ gzip:  0.50 kB
+.svelte-kit/output/server/entries/pages/_layout.svelte.js                      2.84 kB │ gzip:  1.19 kB
+.svelte-kit/output/server/chunks/calculo.js                                    3.40 kB │ gzip:  1.10 kB
+.svelte-kit/output/server/chunks/lib.js                                        3.50 kB │ gzip:  1.33 kB
+.svelte-kit/output/server/entries/pages/test-de-cercania/_page.svelte.js      11.09 kB │ gzip:  3.31 kB
+.svelte-kit/output/server/entries/pages/_page.svelte.js                       13.73 kB │ gzip:  2.94 kB
+.svelte-kit/output/server/chunks/internal.js                                  20.51 kB │ gzip:  6.35 kB
+.svelte-kit/output/server/remote-entry.js                                     28.53 kB │ gzip:  6.05 kB
+.svelte-kit/output/server/chunks/shared.js                                    33.30 kB │ gzip:  9.71 kB
+.svelte-kit/output/server/entries/pages/test-de-cercania/_page.server.ts.js   85.11 kB │ gzip: 23.73 kB
+.svelte-kit/output/server/chunks/server.js                                   119.96 kB │ gzip: 31.34 kB
+.svelte-kit/output/server/index.js                                           128.63 kB │ gzip: 32.85 kB
+
+[33m[PLUGIN_TIMINGS] Warning:[0m Your build spent significant time in plugins. Here is a breakdown:
+  - vite-plugin-sveltekit-guard (82%)
+  - vite-plugin-svelte:compile (7%)
+  - vite-plugin-sveltekit-virtual-modules (7%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+
+✓ built in 12.89s
+
+Run npm run preview to preview your production build locally.
+
+> Using @sveltejs/adapter-cloudflare
+  ✔ done

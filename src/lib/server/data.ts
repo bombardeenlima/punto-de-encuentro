@@ -48,39 +48,23 @@ return { questions: cachedQuestions, candidates: cachedCandidates };
 const preguntasRaw = import.meta.glob('../assets/preguntas.csv', { query: '?raw', import: 'default', eager: true })['../assets/preguntas.csv'] as string;
 const candidateFilesRaw = import.meta.glob('../assets/candidatos/*.csv', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
-// 1. Load Carlos Alvarez to extract question IDs
-const carlosRaw = candidateFilesRaw['../assets/candidatos/Carlos Alvarez.csv'];
-if (!carlosRaw) {
-throw new Error('Carlos Alvarez.csv not found');
-}
+	// 1. Load and parse expected questions
+	const preguntasList = papa.parse<any>(preguntasRaw, { header: true }).data.filter(r => r.Pregunta && r.Código);
 
-const carlosData = papa.parse<any>(carlosRaw, { header: true }).data;
-const questionIds = carlosData
-.map(row => row.Pregunta)
-.filter(Boolean)
-.filter(id => !id.startsWith('Posición'));
+	const questions: QuestionRow[] = preguntasList.map((row) => ({
+		id: row.Código,
+		pregunta: row.Pregunta,
+		muyDeAcuerdoSignifica: row['Muy de acuerdo significa'],
+		eje: row.Eje
+	}));
 
-// 2. Load and parse expected questions
-const preguntasList = papa.parse<any>(preguntasRaw, { header: true }).data.filter(r => r.Pregunta);
+	// 2. Load all candidates
+	const candidates: Candidate[] = [];
 
-if (preguntasList.length !== questionIds.length) {
-throw new Error('Mismatch between preguntas.csv length and candidate question IDs');
-}
-
-const questions: QuestionRow[] = preguntasList.map((row, i) => ({
-id: questionIds[i],
-pregunta: row.Pregunta,
-muyDeAcuerdoSignifica: row['Muy de acuerdo significa'],
-eje: row.Eje
-}));
-
-// 3. Load all candidates
-const candidates: Candidate[] = [];
-
-for (const [path, raw] of Object.entries(candidateFilesRaw)) {
-const file = path.split('/').pop()!;
-const name = file.replace('.csv', '');
-const data = papa.parse<any>(raw, { header: true }).data;
+	for (const [path, raw] of Object.entries(candidateFilesRaw)) {
+		const file = path.split('/').pop()!;
+		const name = file.replace('.csv', '');
+		const data = papa.parse<any>(raw, { header: true }).data;
 
 const responses: Record<string, CandidateResponse> = {};
 

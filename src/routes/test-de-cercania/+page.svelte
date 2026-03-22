@@ -57,7 +57,9 @@ const hasStarted = $derived(!showResults);
 
 const userProfile = $derived.by(() => {
 if (!showResults) return null;
-return calculateUserProfile(answers, rawQuestions);
+const profile = calculateUserProfile(answers, rawQuestions);
+console.log(`Your coordinates are: (${profile.izquierda_derecha}, ${profile.liberal_conservador}, ${profile.sistema_antisistema}, ${profile.nacionalista_globalista})`);
+return profile;
 });
 
 const coordinates = $derived.by(() => {
