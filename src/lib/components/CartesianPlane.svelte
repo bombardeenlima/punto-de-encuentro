@@ -656,6 +656,7 @@
 			onclick={handlePointer}
 			onkeydown={handleKeyDown}
 		>
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<svg
 				bind:this={svgEl}
 				{viewBox}
@@ -834,6 +835,7 @@
 		</button>
 	{:else}
 		<div class={wrapperBaseClass} role="img" aria-label={label} aria-describedby={describedBy}>
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<svg
 				bind:this={svgEl}
 				{viewBox}
@@ -983,7 +985,7 @@
 	{/if}
 	{#if !singlePointMode && nearestParties.length > 0}
 		<div class="rounded-2xl border border-border/70 bg-card/80 p-3 text-xs text-muted-foreground">
-			<span class="mb-2 block font-medium text-foreground">Partidos más cercanos</span>
+			<span class="mb-2 block font-medium text-foreground">Candidatos más cercanos</span>
 			<ul class="space-y-1">
 				{#each nearestParties as party, index}
 					<li class="flex items-center justify-between">

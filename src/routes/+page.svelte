@@ -8,7 +8,7 @@
 			Un test de cercanía política hecho para ti
 		</h1>
 		<p class="max-w-3xl text-xl leading-relaxed text-muted-foreground">
-			Punto de Encuentro te ayuda a evaluar tu cercanía con los partidos a través de un test
+			Punto de Encuentro te ayuda a evaluar tu cercanía con los candidatos a través de un test
 			político claro, directo y fácil de completar.
 		</p>
 	</div>
@@ -16,7 +16,7 @@
 	<div class="mb-12 grid gap-3">
 		<a
 			href="/test-de-cercania"
-			class="group flex min-h-[200px] flex-col justify-between rounded-md border border-border bg-card p-8 transition-all hover:bg-accent/50"
+			class="group flex min-h-50 flex-col justify-between rounded-md border border-border bg-card p-8 transition-all hover:bg-accent/50"
 		>
 			<div class="mb-6">
 				<div class="mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-muted">
@@ -24,7 +24,7 @@
 				</div>
 				<h2 class="mb-2 text-xl font-semibold text-foreground">Comenzar test</h2>
 				<p class="text-sm leading-relaxed text-muted-foreground">
-					Descubre tu afinidad con los partidos políticos
+					Descubre tu afinidad con los candidatos políticos
 				</p>
 			</div>
 			<div

@@ -1,250 +1,235 @@
 <script lang="ts">
-	import { Button, CartesianPlane } from '$lib';
-	import type { PageData } from './$types';
+import { Button } from '$lib';
+import type { PageData } from './$types';
+import {
+calculateUserProfile,
+calculateEuclideanDistance,
+calculateAffinityPercentage
+} from '$lib/calculo';
 
-	const { data } = $props<{ data: PageData }>();
-	const questions = $derived(data.questions);
-	const parties = $derived(data.parties ?? []);
+const { data } = $props<{ data: PageData }>();
+const questions = $derived(data.questions);
+const rawQuestions = $derived(data.rawQuestions);
+const candidates = $derived(data.candidates ?? []);
 
-	type LoadedQuestion = (typeof questions)[number];
-	type PlotPoint = {
-		x: number;
-		y: number;
-		label?: string;
-		isUser?: boolean;
-		id?: string;
-	};
+type LoadedQuestion = (typeof questions)[number];
+type Candidate = (typeof candidates)[number];
 
-	type QuadrantNarrative = {
-		heading: string;
-		title: string;
-		description: string;
-	};
+type PlotPoint = {
+x: number;
+y: number;
+label?: string;
+isUser?: boolean;
+id?: string;
+};
 
-	const answerChoices = [
-		{ label: 'Muy en desacuerdo', value: -2 },
-		{ label: 'En desacuerdo', value: -1 },
-		{ label: 'Neutral / No opino', value: 0 },
-		{ label: 'De acuerdo', value: 1 },
-		{ label: 'Muy de acuerdo', value: 2 }
-	] as const;
+type QuadrantNarrative = {
+heading: string;
+title: string;
+description: string;
+};
 
-	const activeQuestions = $derived.by(() => questions.filter((question: LoadedQuestion) => question.n === 2));
+const answerChoices = [
+{ label: 'Muy en desacuerdo', value: -2 },
+{ label: 'En desacuerdo', value: -1 },
+{ label: 'Neutral / No opino', value: 0 },
+{ label: 'De acuerdo', value: 1 },
+{ label: 'Muy de acuerdo', value: 2 }
+] as const;
 
-	let currentIndex = $state(0);
-	let answers = $state<Record<string, number>>({});
-	let showResults = $state(false);
+const activeQuestions = $derived(questions);
 
-	const totalQuestions = $derived.by(() => activeQuestions.length);
-	const currentQuestion = $derived.by(() => activeQuestions[currentIndex]);
-	const currentAnswer = $derived.by(() =>
-		currentQuestion ? answers[currentQuestion._id] : undefined
-	);
-	const answeredCount = $derived.by(() =>
-		activeQuestions.reduce(
-			(count: number, question: LoadedQuestion) =>
-				answers[question._id] == null ? count : count + 1,
-			0
-		)
-	);
-	const progressPercent = $derived.by(() =>
-		totalQuestions === 0 ? 0 : Math.round((answeredCount / totalQuestions) * 100)
-	);
+let currentIndex = $state(0);
+let answers = $state<Record<string, number>>({});
+let showResults = $state(false);
 
-	const hasStarted = $derived.by(() => !showResults);
+const totalQuestions = $derived(activeQuestions.length);
+const currentQuestion = $derived(activeQuestions[currentIndex]);
+const currentAnswer = $derived(currentQuestion ? answers[currentQuestion.id] : undefined);
+const answeredCount = $derived(
+activeQuestions.reduce((count: number, q: LoadedQuestion) => (answers[q.id] == null ? count : count + 1), 0)
+);
+const progressPercent = $derived(
+totalQuestions === 0 ? 0 : Math.round((answeredCount / totalQuestions) * 100)
+);
 
-	const coordinates = $derived.by(() => {
-		if (!showResults) return null;
-		let x = 0;
-		let y = 0;
-		for (const question of activeQuestions) {
-			const value = answers[question._id] ?? 0;
-			const eje = Number(question.eje);
-			if (Number.isNaN(eje)) continue;
-			if (eje === 0) x += value;
-			if (eje === 1) y += value;
-		}
-		return { x, y };
-	});
+const hasStarted = $derived(!showResults);
 
-	type LoadedParty = (typeof parties)[number];
+const userProfile = $derived.by(() => {
+if (!showResults) return null;
+return calculateUserProfile(answers, rawQuestions);
+});
 
-	const partyPoints = $derived.by(() =>
-		parties
-			.map((party: LoadedParty) => {
-				const [coordX, coordY] = party.coordenadas;
-				if (typeof coordX !== 'number' || typeof coordY !== 'number') return null;
-				return {
-					x: coordX,
-					y: coordY,
-					label: party.partido,
-					id: party._id
-				} satisfies PlotPoint;
-			})
-			.filter((point: PlotPoint | null): point is PlotPoint => point != null)
-	);
+const coordinates = $derived.by(() => {
+if (!userProfile) return null;
+return {
+x: userProfile.izquierda_derecha * 32,
+y: userProfile.liberal_conservador * 32
+};
+});
 
-	const displayedPoints = $derived.by(() => {
-		if (!showResults) return [] as PlotPoint[];
-		const base: PlotPoint[] = [...partyPoints];
-		if (coordinates) {
-			base.push({
-				x: planeX,
-				y: planeY,
-				label: 'Tu resultado',
-				isUser: true
-			});
-		}
-		return base;
-	});
+const partyPoints = $derived.by(() =>
+candidates
+.map((candidate: Candidate) => {
+const pos = candidate.position;
+if (!pos) return null;
+return {
+x: (pos.izquierda_derecha ?? 0) * 32,
+y: (pos.liberal_conservador ?? 0) * 32,
+label: candidate.name,
+id: candidate.id
+} satisfies PlotPoint;
+})
+.filter((point: PlotPoint | null): point is PlotPoint => point != null)
+);
 
-	let planeX = $state(0);
-	let planeY = $state(0);
-	let planeNarrative = $state<QuadrantNarrative | null>(null);
-	let resultsSection = $state<HTMLElement | null>(null);
-	let hasAnnouncedResults = $state(false);
+const displayedPoints = $derived.by(() => {
+if (!showResults) return [] as PlotPoint[];
+const base: PlotPoint[] = [...partyPoints];
+if (coordinates) {
+base.push({
+x: planeX,
+y: planeY,
+label: 'Tu resultado',
+isUser: true
+});
+}
+return base;
+});
 
-	const describeCoordinates = (x: number, y: number) => {
-		const onAxis = (value: number) => Math.abs(value) < 0.01;
-		const horizontal = onAxis(x)
-			? 'sobre el eje vertical'
-			: x > 0
-				? 'a la derecha del eje vertical'
-				: 'a la izquierda del eje vertical';
-		const vertical = onAxis(y)
-			? 'sobre el eje horizontal'
-			: y > 0
-				? 'en la parte superior del plano'
-				: 'en la parte inferior del plano';
-		if (onAxis(x) && onAxis(y)) return 'en el centro del plano';
-		if (onAxis(x)) return vertical;
-		if (onAxis(y)) return horizontal;
-		return `${vertical} y ${horizontal}`;
-	};
+let planeX = $state(0);
+let planeY = $state(0);
+let planeNarrative = $state<QuadrantNarrative | null>(null);
+let resultsSection = $state<HTMLElement | null>(null);
+let hasAnnouncedResults = $state(false);
 
-	const planeDescription = $derived.by(() => {
-		if (!showResults || !coordinates) return null;
-		const { x, y } = coordinates;
-		const position = describeCoordinates(x, y);
-		return `Tu resultado se ubica ${position} con coordenadas (${x.toFixed(2)}, ${y.toFixed(2)}).`;
-	});
+const describeCoordinates = (x: number, y: number) => {
+const onAxis = (value: number) => Math.abs(value) < 0.01;
+const horizontal = onAxis(x)
+? 'sobre el eje vertical'
+: x > 0
+? 'a la derecha del eje vertical'
+: 'a la izquierda del eje vertical';
+const vertical = onAxis(y)
+? 'sobre el eje horizontal'
+: y > 0
+? 'en la parte superior del plano'
+: 'en la parte inferior del plano';
+if (onAxis(x) && onAxis(y)) return 'en el centro del plano';
+if (onAxis(x)) return vertical;
+if (onAxis(y)) return horizontal;
+return `${vertical} y ${horizontal}`;
+};
 
-	const partyDescriptions = $derived.by(() =>
-		partyPoints.map((point: PlotPoint) => ({
-			id: point.id ?? `${point.label ?? 'partido'}-${point.x}-${point.y}`,
-			label: point.label ?? 'Partido sin nombre',
-			description: `Ubicado ${describeCoordinates(point.x, point.y)} con coordenadas (${point.x.toFixed(2)}, ${point.y.toFixed(2)}).`,
-			x: point.x,
-			y: point.y
-		}))
-	);
+const planeDescription = $derived.by(() => {
+if (!showResults || !coordinates) return null;
+const { x, y } = coordinates;
+const position = describeCoordinates(x, y);
+return `Tu resultado se ubica ${position} con coordenadas (${x.toFixed(2)}, ${y.toFixed(2)}).`;
+});
 
-	const nearestParties = $derived.by(() => {
-		if (!coordinates) return [];
+const nearestParties = $derived.by(() => {
+if (!userProfile) return [];
 
-		return partyDescriptions
-			.map(
-				(party: {
-					id: string;
-					label: string;
-					description: string;
-					x: number;
-					y: number;
-				}) => ({
-					...party,
-					distance: Math.sqrt(
-						Math.pow(party.x - coordinates.x, 2) + Math.pow(party.y - coordinates.y, 2)
-					)
-				})
-			)
-			.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
-	});
+return candidates
+.map((candidate: Candidate) => {
+const pos = candidate.position;
+const distance = calculateEuclideanDistance(userProfile as any, pos as any);
+const affinity = calculateAffinityPercentage(distance);
+return {
+id: candidate.id,
+label: candidate.name,
+description: `Ubicado ${describeCoordinates((pos.izquierda_derecha ?? 0) * 32, (pos.liberal_conservador ?? 0) * 32)}. Afinidad: ${affinity}%`,
+x: (pos.izquierda_derecha ?? 0) * 32,
+y: (pos.liberal_conservador ?? 0) * 32,
+distance,
+affinity
+};
+})
+.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
+});
 
-	let questionContainerRef = $state<HTMLDivElement | null>(null);
+let questionContainerRef = $state<HTMLDivElement | null>(null);
 
-	$effect(() => {
-		if (showResults && coordinates) {
-			planeX = coordinates.x;
-			planeY = coordinates.y;
-		} else if (!showResults) {
-			planeX = 0;
-			planeY = 0;
-		}
-		if (!showResults) {
-			hasAnnouncedResults = false;
-		}
-		if (showResults && resultsSection && !hasAnnouncedResults) {
-			hasAnnouncedResults = true;
-			queueMicrotask(() => {
-				resultsSection?.focus();
-			});
-		}
+$effect(() => {
+if (showResults && coordinates) {
+planeX = coordinates.x;
+planeY = coordinates.y;
+} else if (!showResults) {
+planeX = 0;
+planeY = 0;
+}
+if (!showResults) {
+hasAnnouncedResults = false;
+}
+if (showResults && resultsSection && !hasAnnouncedResults) {
+hasAnnouncedResults = true;
+queueMicrotask(() => {
+resultsSection?.focus();
+});
+}
 
-		// Focus on the question container when it changes for better keyboard navigation
-		if (hasStarted && !showResults && questionContainerRef) {
-			queueMicrotask(() => {
-				questionContainerRef?.focus();
-			});
-		}
-	});
+if (hasStarted && !showResults && questionContainerRef) {
+queueMicrotask(() => {
+questionContainerRef?.focus();
+});
+}
+});
 
-	function recordAnswer(questionId: string, value: number) {
-		answers = { ...answers, [questionId]: value };
-	}
+function recordAnswer(questionId: string, value: number) {
+answers = { ...answers, [questionId]: value };
+}
 
-	function goNext() {
-		if (!currentQuestion) return;
-		if (currentAnswer == null) return;
-		if (currentIndex >= totalQuestions - 1) {
-			showResults = true;
-			return;
-		}
-		currentIndex += 1;
-	}
+function goNext() {
+if (!currentQuestion) return;
+if (currentAnswer == null) return;
+if (currentIndex >= totalQuestions - 1) {
+showResults = true;
+return;
+}
+currentIndex += 1;
+}
 
-	function goBack() {
-		if (currentIndex === 0) return;
-		currentIndex -= 1;
-	}
+function goBack() {
+if (currentIndex === 0) return;
+currentIndex -= 1;
+}
 
-	function handleSubmit(event: Event) {
-		event.preventDefault();
-		goNext();
-	}
+function handleSubmit(event: Event) {
+event.preventDefault();
+goNext();
+}
 
-	function restartTest() {
-		currentIndex = 0;
-		answers = {};
-		showResults = false;
-	}
+function restartTest() {
+currentIndex = 0;
+answers = {};
+showResults = false;
+}
 
-	function handleKeyboardNavigation(event: KeyboardEvent) {
-		if (!hasStarted || showResults) return;
+function handleKeyboardNavigation(event: KeyboardEvent) {
+if (!hasStarted || showResults) return;
 
-		// Arrow keys for navigation
-		if (event.key === 'ArrowLeft' && currentIndex > 0) {
-			event.preventDefault();
-			goBack();
-		} else if (event.key === 'ArrowRight' && currentAnswer != null) {
-			event.preventDefault();
-			goNext();
-		}
+if (event.key === 'ArrowLeft' && currentIndex > 0) {
+event.preventDefault();
+goBack();
+} else if (event.key === 'ArrowRight' && currentAnswer != null) {
+event.preventDefault();
+goNext();
+}
 
-		// Number keys 1-5 for answer selection
-		if (currentQuestion && event.key >= '1' && event.key <= '5') {
-			event.preventDefault();
-			const answerIndex = parseInt(event.key) - 1;
-			if (answerIndex < answerChoices.length) {
-				recordAnswer(currentQuestion._id, answerChoices[answerIndex].value);
-			}
-		}
+if (currentQuestion && event.key >= '1' && event.key <= '5') {
+event.preventDefault();
+const answerIndex = parseInt(event.key) - 1;
+if (answerIndex < answerChoices.length) {
+recordAnswer(currentQuestion.id, answerChoices[answerIndex].value);
+}
+}
 
-		// Enter to submit
-		if (event.key === 'Enter' && currentAnswer != null) {
-			event.preventDefault();
-			goNext();
-		}
-	}
+if (event.key === 'Enter' && currentAnswer != null) {
+event.preventDefault();
+goNext();
+}
+}
 </script>
 
 <svelte:head>
@@ -303,100 +288,34 @@
 	{/if}
 
 	{#if showResults && coordinates}
-		<div class="space-y-6" aria-live="polite">
-			<!-- Results Header -->
-			<div class="grid gap-4 lg:grid-cols-2">
-				<div class="rounded-md border border-border bg-card p-6 text-center lg:p-8 lg:text-left">
-					<p class="mb-2 text-sm font-semibold text-muted-foreground">Resultado</p>
-					<h2 class="text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-						({planeX.toFixed(2)}, {planeY.toFixed(2)})
-					</h2>
-				</div>
-				{#if planeNarrative}
-					<div class="rounded-md border border-border bg-card p-6 lg:p-8">
-						<p class="text-base font-semibold text-foreground sm:text-lg">{planeNarrative.title}</p>
-						<p class="mt-2 text-sm text-muted-foreground sm:text-base">
-							{planeNarrative.description}
-						</p>
-					</div>
-				{/if}
-			</div>
-
-			<!-- Plane Visualization with Nearest Parties -->
-			<div class="grid gap-4 lg:grid-cols-[1fr_280px] lg:gap-6">
-				<div
-					class="min-w-0 overflow-hidden rounded-md border border-border bg-card"
-					role="status"
-					aria-live="polite"
-					tabindex="-1"
-					bind:this={resultsSection}
-					aria-describedby={planeDescription ? 'plane-description' : undefined}
-				>
-					<CartesianPlane
-						bind:x={planeX}
-						bind:y={planeY}
-						label="Resultado del test"
-						interactive={false}
-						singlePointMode={true}
-						points={displayedPoints}
-						bind:narrative={planeNarrative}
-						describedBy={planeDescription ? 'plane-description' : undefined}
-					/>
-				</div>
-
-				<!-- Nearest Parties Sidebar -->
-				<div class="min-w-0 rounded-md border border-border bg-card p-4 lg:p-5">
-					<h3 class="mb-3 text-base font-semibold text-foreground lg:text-lg">
-						Partidos más cercanos
-					</h3>
-					{#if nearestParties.length > 0}
-						<ul class="space-y-2.5">
-							{#each nearestParties.slice(0, 5) as party, index (party.id)}
-								<li class="text-sm">
-									<div class="flex items-baseline justify-between gap-2">
-										<span class="min-w-0 truncate font-medium text-foreground">
+		<div class="space-y-6" aria-live="polite" bind:this={resultsSection} tabindex="-1">
+			<!-- Nearest Parties -->
+			<div class="min-w-0 rounded-md border border-border bg-card p-6 lg:p-8">
+				<h3 class="mb-4 text-xl font-semibold text-foreground lg:text-2xl">
+					Tus Candidatos Más Cercanos
+				</h3>
+				{#if nearestParties.length > 0}
+					<ul class="space-y-4">
+						{#each nearestParties.slice(0, 5) as party, index (party.id)}
+							<li class="rounded-md border border-border p-4 transition-colors hover:bg-accent/50">
+								<div class="flex items-center justify-between gap-4">
+									<div>
+										<span class="font-medium text-foreground text-lg">
 											{index + 1}. {party.label}
 										</span>
-										<span class="shrink-0 text-xs text-muted-foreground"
-											>{party.distance.toFixed(1)}u</span
-										>
 									</div>
-								</li>
-							{/each}
-						</ul>
-					{:else}
-						<p class="text-sm text-muted-foreground">No hay partidos para mostrar.</p>
-					{/if}
-				</div>
-
-				{#if planeDescription}
-					<p id="plane-description" class="sr-only">
-						{planeDescription}
-					</p>
+									<div class="text-right">
+										<span class="text-2xl font-bold text-primary">{party.affinity}%</span>
+										<span class="block text-xs text-muted-foreground">de afinidad</span>
+									</div>
+								</div>
+							</li>
+						{/each}
+					</ul>
+				{:else}
+					<p class="text-sm text-muted-foreground">No hay candidatos para mostrar.</p>
 				{/if}
 			</div>
-
-			<!-- All Party References -->
-			{#if nearestParties.length > 0}
-				<div>
-					<h3 class="mb-4 text-2xl font-semibold text-foreground">
-						Todos los partidos en el plano
-					</h3>
-					<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-						{#each nearestParties as party (party.id)}
-							<div
-								class="rounded-md border border-border bg-card p-4 transition-all hover:bg-accent/50"
-							>
-								<div class="mb-1 flex items-baseline justify-between gap-2">
-									<span class="font-semibold text-foreground">{party.label}</span>
-									<span class="text-xs text-muted-foreground">{party.distance.toFixed(1)}u</span>
-								</div>
-								<span class="block text-sm text-muted-foreground">{party.description}</span>
-							</div>
-						{/each}
-					</div>
-				</div>
-			{/if}
 
 			<!-- Action Buttons -->
 			<div class="flex flex-wrap items-center justify-center gap-3">
@@ -411,7 +330,7 @@
 		>
 			<div class="mb-6">
 				<h2
-					id="question-{currentQuestion._id}"
+					id="question-{currentQuestion.id}"
 					class="text-2xl leading-tight font-semibold text-foreground"
 				>
 					{currentQuestion.pregunta}
@@ -436,7 +355,7 @@
 					Seleccioná una sola opción para continuar. Usa las teclas 1-5 para seleccionar respuestas,
 					flechas izquierda y derecha para navegar, Enter para continuar.
 				</p>
-				<fieldset class="space-y-2" aria-labelledby="question-{currentQuestion._id}">
+				<fieldset class="space-y-2" aria-labelledby="question-{currentQuestion.id}">
 					<legend class="sr-only">{currentQuestion.pregunta}</legend>
 					{#each answerChoices as option, index}
 						<label
@@ -444,11 +363,11 @@
 						>
 							<input
 								type="radio"
-								name={currentQuestion._id}
+								name={currentQuestion.id}
 								class="sr-only"
 								value={option.value}
 								checked={currentAnswer === option.value}
-								onchange={() => recordAnswer(currentQuestion._id, option.value)}
+								onchange={() => recordAnswer(currentQuestion.id, option.value)}
 							/>
 							<span class="flex items-center gap-2">
 								<kbd

@@ -1,0 +1,363 @@
+Loading svelte-check in workspace: /home/renzo/Projects/punto-de-encuentro
+Getting Svelte diagnostics...
+
+/home/renzo/Projects/punto-de-encuentro/src/lib/components/CartesianPlane.svelte:659:4
+Warn: `<svg>` with a pointerdown, pointermove, pointerup or pointercancel handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions (svelte)
+		>
+			<svg
+				bind:this={svgEl}
+				{viewBox}
+				class="size-full"
+				onwheel={handleWheel}
+				onpointerdown={handlePointerDown}
+				onpointermove={handlePointerMove}
+				onpointerup={handlePointerUp}
+				onpointercancel={handlePointerCancel}
+			>
+				<defs>
+					<linearGradient id="plane-background" x1="0" x2="0" y1="0" y2="1">
+						<stop offset="0%" stop-color="var(--color-secondary)" stop-opacity="0.7" />
+						<stop offset="100%" stop-color="var(--color-secondary)" stop-opacity="0.95" />
+					</linearGradient>
+				</defs>
+
+				<rect
+					x={viewBounds.minX}
+					y={viewBounds.minY}
+					width={viewBounds.span}
+					height={viewBounds.span}
+					fill="url(#plane-background)"
+				/>
+
+				<g class="stroke-border/60">
+					{#each gridLines.vertical as value (value)}
+						{#if Math.abs(value) > 1e-6}
+							<line
+								x1={value}
+								y1={-viewBounds.maxY}
+								x2={value}
+								y2={-viewBounds.minY}
+								stroke-width={gridStrokeWidth}
+							/>
+						{/if}
+					{/each}
+					{#each gridLines.horizontal as value (value)}
+						{#if Math.abs(value) > 1e-6}
+							<line
+								x1={viewBounds.minX}
+								y1={-value}
+								x2={viewBounds.maxX}
+								y2={-value}
+								stroke-width={gridStrokeWidth}
+							/>
+						{/if}
+					{/each}
+				</g>
+
+				<g class="stroke-border/90">
+					{#if axesInView.yAxis}
+						<line
+							x1={0}
+							y1={-viewBounds.maxY}
+							x2={0}
+							y2={-viewBounds.minY}
+							stroke-width={axisStrokeWidth}
+						/>
+					{/if}
+					{#if axesInView.xAxis}
+						<line
+							x1={viewBounds.minX}
+							y1={0}
+							x2={viewBounds.maxX}
+							y2={0}
+							stroke-width={axisStrokeWidth}
+						/>
+					{/if}
+				</g>
+
+				{#if axesInView.yAxis}
+					<g class="fill-muted-foreground" font-size={tickFontSize}>
+						{#each majorTicks.x as tick (tick)}
+							{#if Math.abs(tick) > 1e-6}
+								<text x={tick} y={-tickLabelOffset} text-anchor="middle">{formatTick(tick)}</text>
+							{/if}
+						{/each}
+					</g>
+				{/if}
+
+				{#if axesInView.xAxis}
+					<g class="fill-muted-foreground" font-size={tickFontSize}>
+						{#each majorTicks.y as tick (tick)}
+							{#if Math.abs(tick) > 1e-6}
+								<text x={tickLabelOffset} y={-tick} text-anchor="start" alignment-baseline="middle"
+									>{formatTick(tick)}</text
+								>
+							{/if}
+						{/each}
+					</g>
+				{/if}
+
+				<g class="fill-muted-foreground/80" font-size={axisFontSize}>
+					{#if axesInView.yAxis}
+						<text x={viewBounds.maxX - axisLabelOffset} y={-axisLabelOffset} text-anchor="end"
+							>x</text
+						>
+					{/if}
+					{#if axesInView.xAxis}
+						<text x={axisLabelOffset} y={-(viewBounds.maxY - axisLabelOffset)} text-anchor="start"
+							>y</text
+						>
+					{/if}
+				</g>
+
+				<g>
+					{#each displayedPoints as point, index (getPointKey(point, index))}
+						{@const pointKey = getPointKey(point, index)}
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<g
+							role="presentation"
+							onmouseenter={() => showHover(point, index)}
+							onmouseleave={clearHover}
+						>
+							{#if point.label}
+								<title>{point.label}</title>
+							{/if}
+							<circle
+								cx={point.x}
+								cy={-point.y}
+								r={outerDotRadius}
+								stroke="var(--color-card)"
+								stroke-width={outerDotStroke}
+								style={`fill: ${getPointColor(point)};`}
+								fill-opacity="0.2"
+							/>
+							<circle
+								cx={point.x}
+								cy={-point.y}
+								r={innerDotRadius}
+								stroke="var(--color-card)"
+								stroke-width={innerDotStroke}
+								style={`fill: ${getPointColor(point)};`}
+							/>
+						</g>
+					{/each}
+				</g>
+
+				{#if interactivePoint}
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<g
+						role="presentation"
+						onmouseenter={() => showHover({ ...interactivePoint, label }, displayedPoints.length)}
+						onmouseleave={clearHover}
+					>
+						<title>{label}</title>
+						<circle
+							cx={interactivePoint.x}
+							cy={-interactivePoint.y}
+							r={outerDotRadius}
+							stroke="var(--color-card)"
+							stroke-width={outerDotStroke}
+							style="fill: var(--color-primary);"
+							fill-opacity="0.2"
+						/>
+						<circle
+							cx={interactivePoint.x}
+							cy={-interactivePoint.y}
+							r={innerDotRadius}
+							stroke="var(--color-card)"
+							stroke-width={innerDotStroke}
+							style="fill: var(--color-primary);"
+						/>
+					</g>
+				{/if}
+			</svg>
+			{#if tooltip}
+
+/home/renzo/Projects/punto-de-encuentro/src/lib/components/CartesianPlane.svelte:837:4
+Warn: `<svg>` with a pointerdown, pointermove, pointerup or pointercancel handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions (svelte)
+		<div class={wrapperBaseClass} role="img" aria-label={label} aria-describedby={describedBy}>
+			<svg
+				bind:this={svgEl}
+				{viewBox}
+				class="size-full"
+				onwheel={handleWheel}
+				onpointerdown={handlePointerDown}
+				onpointermove={handlePointerMove}
+				onpointerup={handlePointerUp}
+				onpointercancel={handlePointerCancel}
+			>
+				<defs>
+					<linearGradient id="plane-background" x1="0" x2="0" y1="0" y2="1">
+						<stop offset="0%" stop-color="var(--color-secondary)" stop-opacity="0.7" />
+						<stop offset="100%" stop-color="var(--color-secondary)" stop-opacity="0.95" />
+					</linearGradient>
+				</defs>
+
+				<rect
+					x={viewBounds.minX}
+					y={viewBounds.minY}
+					width={viewBounds.span}
+					height={viewBounds.span}
+					fill="url(#plane-background)"
+				/>
+
+				<g class="stroke-border/60">
+					{#each gridLines.vertical as value (value)}
+						{#if Math.abs(value) > 1e-6}
+							<line
+								x1={value}
+								y1={-viewBounds.maxY}
+								x2={value}
+								y2={-viewBounds.minY}
+								stroke-width={gridStrokeWidth}
+							/>
+						{/if}
+					{/each}
+					{#each gridLines.horizontal as value (value)}
+						{#if Math.abs(value) > 1e-6}
+							<line
+								x1={viewBounds.minX}
+								y1={-value}
+								x2={viewBounds.maxX}
+								y2={-value}
+								stroke-width={gridStrokeWidth}
+							/>
+						{/if}
+					{/each}
+				</g>
+
+				<g class="stroke-border/90">
+					{#if axesInView.yAxis}
+						<line
+							x1={0}
+							y1={-viewBounds.maxY}
+							x2={0}
+							y2={-viewBounds.minY}
+							stroke-width={axisStrokeWidth}
+						/>
+					{/if}
+					{#if axesInView.xAxis}
+						<line
+							x1={viewBounds.minX}
+							y1={0}
+							x2={viewBounds.maxX}
+							y2={0}
+							stroke-width={axisStrokeWidth}
+						/>
+					{/if}
+				</g>
+
+				{#if axesInView.yAxis}
+					<g class="fill-muted-foreground" font-size={tickFontSize}>
+						{#each majorTicks.x as tick (tick)}
+							{#if Math.abs(tick) > 1e-6}
+								<text x={tick} y={-tickLabelOffset} text-anchor="middle">{formatTick(tick)}</text>
+							{/if}
+						{/each}
+					</g>
+				{/if}
+
+				{#if axesInView.xAxis}
+					<g class="fill-muted-foreground" font-size={tickFontSize}>
+						{#each majorTicks.y as tick (tick)}
+							{#if Math.abs(tick) > 1e-6}
+								<text x={tickLabelOffset} y={-tick} text-anchor="start" alignment-baseline="middle"
+									>{formatTick(tick)}</text
+								>
+							{/if}
+						{/each}
+					</g>
+				{/if}
+
+				<g class="fill-muted-foreground/80" font-size={axisFontSize}>
+					{#if axesInView.yAxis}
+						<text x={viewBounds.maxX - axisLabelOffset} y={-axisLabelOffset} text-anchor="end"
+							>x</text
+						>
+					{/if}
+					{#if axesInView.xAxis}
+						<text x={axisLabelOffset} y={-(viewBounds.maxY - axisLabelOffset)} text-anchor="start"
+							>y</text
+						>
+					{/if}
+				</g>
+
+				{#each displayedPoints as point, index (getPointKey(point, index))}
+					{@const pointKey = getPointKey(point, index)}
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<g
+						role="presentation"
+						onmouseenter={() => showHover(point, index)}
+						onmouseleave={clearHover}
+					>
+						{#if point.label}
+							<title>{point.label}</title>
+						{/if}
+						<circle
+							cx={point.x}
+							cy={-point.y}
+							r={outerDotRadius}
+							stroke="var(--color-card)"
+							stroke-width={outerDotStroke}
+							style={`fill: ${getPointColor(point)};`}
+							fill-opacity="0.2"
+						/>
+						<circle
+							cx={point.x}
+							cy={-point.y}
+							r={innerDotRadius}
+							stroke="var(--color-card)"
+							stroke-width={innerDotStroke}
+							style={`fill: ${getPointColor(point)};`}
+						/>
+					</g>
+				{/each}
+			</svg>
+			{#if tooltip}
+
+/home/renzo/Projects/punto-de-encuentro/src/routes/test-de-cercania/+page.svelte:47:25
+Error: Parameter 'count' implicitly has an 'any' type. (ts)
+const answeredCount = $derived(
+activeQuestions.reduce((count, q) => (answers[q.id] == null ? count : count + 1), 0)
+);
+
+/home/renzo/Projects/punto-de-encuentro/src/routes/test-de-cercania/+page.svelte:47:32
+Error: Parameter 'q' implicitly has an 'any' type. (ts)
+const answeredCount = $derived(
+activeQuestions.reduce((count, q) => (answers[q.id] == null ? count : count + 1), 0)
+);
+
+/home/renzo/Projects/punto-de-encuentro/src/routes/test-de-cercania/+page.svelte:70:7
+Error: Parameter 'candidate' implicitly has an 'any' type. (ts)
+candidates
+.map((candidate) => {
+const pos = candidate.position;
+
+/home/renzo/Projects/punto-de-encuentro/src/routes/test-de-cercania/+page.svelte:80:10
+Error: Parameter 'point' implicitly has an 'any' type. (ts)
+})
+.filter((point): point is PlotPoint => point != null)
+);
+
+/home/renzo/Projects/punto-de-encuentro/src/routes/test-de-cercania/+page.svelte:132:7
+Error: Parameter 'candidate' implicitly has an 'any' type. (ts)
+return candidates
+.map((candidate) => {
+const pos = candidate.position;
+
+/home/renzo/Projects/punto-de-encuentro/src/routes/test-de-cercania/+page.svelte:146:8
+Error: Parameter 'a' implicitly has an 'any' type. (ts)
+})
+.sort((a, b) => a.distance - b.distance);
+});
+
+/home/renzo/Projects/punto-de-encuentro/src/routes/test-de-cercania/+page.svelte:146:11
+Error: Parameter 'b' implicitly has an 'any' type. (ts)
+})
+.sort((a, b) => a.distance - b.distance);
+});
+
+====================================
+svelte-check found 7 errors and 2 warnings in 2 files
