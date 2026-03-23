@@ -7,7 +7,7 @@
   <!-- Hero Centralized Minimal -->
   <section class="text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
     <div class="inline-block rounded-full border border-border bg-card px-4 py-1.5 text-sm shadow-sm font-semibold text-muted-foreground">
-      Voto Claro / 2026
+      Voto Estratégico / 2026
     </div>
     <h1 class="text-6xl sm:text-7xl font-bold tracking-tighter">
       38 partidos.<br/>Un voto. <span class="text-primary italic">Úsalo bien.</span>
