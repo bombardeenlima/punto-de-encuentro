@@ -30,24 +30,25 @@ description: string;
 };
 
 const answerChoices = [
-{ label: 'Muy en desacuerdo', value: -2 },
-{ label: 'En desacuerdo', value: -1 },
-{ label: 'Neutral / No opino', value: 0 },
-{ label: 'De acuerdo', value: 1 },
-{ label: 'Muy de acuerdo', value: 2 }
+	{ label: 'Muy de acuerdo', value: 2 },
+	{ label: 'De acuerdo', value: 1 },
+	{ label: 'Neutral', value: 0 },
+	{ label: 'En desacuerdo', value: -1 },
+	{ label: 'Muy en desacuerdo', value: -2 },
+	{ label: 'No opino', value: null }
 ] as const;
 
 const activeQuestions = $derived(questions);
 
 let currentIndex = $state(0);
-let answers = $state<Record<string, number>>({});
+let answers = $state<Record<string, number | null>>({});
 let showResults = $state(false);
 
 const totalQuestions = $derived(activeQuestions.length);
 const currentQuestion = $derived(activeQuestions[currentIndex]);
 const currentAnswer = $derived(currentQuestion ? answers[currentQuestion.id] : undefined);
 const answeredCount = $derived(
-activeQuestions.reduce((count: number, q: LoadedQuestion) => (answers[q.id] == null ? count : count + 1), 0)
+	activeQuestions.reduce((count: number, q: LoadedQuestion) => (answers[q.id] === undefined ? count : count + 1), 0)
 );
 const progressPercent = $derived(
 totalQuestions === 0 ? 0 : Math.round((answeredCount / totalQuestions) * 100)
@@ -178,13 +179,13 @@ questionContainerRef?.focus();
 }
 });
 
-function recordAnswer(questionId: string, value: number) {
+function recordAnswer(questionId: string, value: number | null) {
 answers = { ...answers, [questionId]: value };
 }
 
 function goNext() {
 if (!currentQuestion) return;
-if (currentAnswer == null) return;
+if (currentAnswer === undefined) return;
 if (currentIndex >= totalQuestions - 1) {
 showResults = true;
 return;
@@ -214,12 +215,12 @@ if (!hasStarted || showResults) return;
 if (event.key === 'ArrowLeft' && currentIndex > 0) {
 event.preventDefault();
 goBack();
-} else if (event.key === 'ArrowRight' && currentAnswer != null) {
+} else if (event.key === 'ArrowRight' && currentAnswer !== undefined) {
 event.preventDefault();
 goNext();
 }
 
-if (currentQuestion && event.key >= '1' && event.key <= '5') {
+if (currentQuestion && event.key >= '1' && event.key <= '6') {
 event.preventDefault();
 const answerIndex = parseInt(event.key) - 1;
 if (answerIndex < answerChoices.length) {
@@ -227,7 +228,7 @@ recordAnswer(currentQuestion.id, answerChoices[answerIndex].value);
 }
 }
 
-if (event.key === 'Enter' && currentAnswer != null) {
+if (event.key === 'Enter' && currentAnswer !== undefined) {
 event.preventDefault();
 goNext();
 }
@@ -340,7 +341,7 @@ goNext();
 				<p class="mt-3 hidden text-sm text-muted-foreground sm:block">
 					Usa las teclas <kbd
 						class="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-semibold"
-						>1-5</kbd
+						>1-6</kbd
 					>
 					para seleccionar,
 					<kbd class="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-semibold"
@@ -354,7 +355,7 @@ goNext();
 
 			<form class="space-y-3" onsubmit={handleSubmit} aria-describedby="question-instructions">
 				<p id="question-instructions" class="sr-only">
-					Seleccioná una sola opción para continuar. Usa las teclas 1-5 para seleccionar respuestas,
+					Seleccioná una sola opción para continuar. Usa las teclas 1-6 para seleccionar respuestas,
 					flechas izquierda y derecha para navegar, Enter para continuar.
 				</p>
 				<fieldset class="space-y-2" aria-labelledby="question-{currentQuestion.id}">
@@ -386,7 +387,7 @@ goNext();
 					<Button variant="outline" type="button" onclick={goBack} disabled={currentIndex === 0}>
 						<span aria-hidden="true">←</span> Anterior
 					</Button>
-					<Button type="submit" disabled={currentAnswer == null}>
+					<Button type="submit" disabled={currentAnswer === undefined}>
 						{currentIndex === totalQuestions - 1 ? 'Finalizar' : 'Siguiente'}
 						<span aria-hidden="true">→</span>
 					</Button>

@@ -27,7 +27,7 @@ export type EjeKey = typeof AXIS_KEYS[keyof typeof AXIS_KEYS];
 
 // Calculates user's profile based on their answers
 export function calculateUserProfile(
-	answers: Record<string, number>, // questionId -> answer value (-2 to +2)
+	answers: Record<string, number | null>, // questionId -> answer value (-2 to +2, or null for skip)
 	questions: QuestionRow[]
 ): Record<EjeKey, number> {
 	const scores: Record<EjeKey, { total: number; count: number }> = {
