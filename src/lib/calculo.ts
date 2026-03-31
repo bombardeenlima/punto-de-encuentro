@@ -15,12 +15,12 @@ export const AXIS_KEYS = {
 } as const;
 
 export type Eje = keyof typeof AXIS_KEYS;
-export type EjeKey = typeof AXIS_KEYS[keyof typeof AXIS_KEYS];
+export type EjeKey = (typeof AXIS_KEYS)[keyof typeof AXIS_KEYS];
 
 /**
  * Normalizes candidate CSV 'Valor numérico' or user responses
  * by summing and dividing by (2 * number of valid answers in the axis).
- * 
+ *
  * For the user, we first convert the raw answer (-2 to 2) to the directional score.
  * For the candidates, their 'Valor numérico' is already the directional score.
  */
@@ -31,10 +31,10 @@ export function calculateUserProfile(
 	questions: QuestionRow[]
 ): Record<EjeKey, number> {
 	const scores: Record<EjeKey, { total: number; count: number }> = {
-		'liberal_conservador': { total: 0, count: 0 },
-		'izquierda_derecha': { total: 0, count: 0 },
-		'sistema_antisistema': { total: 0, count: 0 },
-		'nacionalista_globalista': { total: 0, count: 0 }
+		liberal_conservador: { total: 0, count: 0 },
+		izquierda_derecha: { total: 0, count: 0 },
+		sistema_antisistema: { total: 0, count: 0 },
+		nacionalista_globalista: { total: 0, count: 0 }
 	};
 
 	for (const q of questions) {
@@ -46,7 +46,7 @@ export function calculateUserProfile(
 		if (!axisKey) continue;
 
 		let directionalScore = answer;
-		
+
 		// If the question pushes towards the negative side, we flip the user's answer
 		// E.g. answering +2 to a Conservador question means -2 on the axis.
 		if (POLES.NEGATIVE.includes(q.muyDeAcuerdoSignifica)) {
@@ -60,10 +60,10 @@ export function calculateUserProfile(
 	}
 
 	const profile: Record<EjeKey, number> = {
-		'liberal_conservador': 0,
-		'izquierda_derecha': 0,
-		'sistema_antisistema': 0,
-		'nacionalista_globalista': 0
+		liberal_conservador: 0,
+		izquierda_derecha: 0,
+		sistema_antisistema: 0,
+		nacionalista_globalista: 0
 	};
 
 	for (const key of Object.keys(scores) as EjeKey[]) {
@@ -81,10 +81,10 @@ export function calculateCandidateProfile(
 	questions: QuestionRow[]
 ): Record<EjeKey, number> {
 	const scores: Record<EjeKey, { total: number; count: number }> = {
-		'liberal_conservador': { total: 0, count: 0 },
-		'izquierda_derecha': { total: 0, count: 0 },
-		'sistema_antisistema': { total: 0, count: 0 },
-		'nacionalista_globalista': { total: 0, count: 0 }
+		liberal_conservador: { total: 0, count: 0 },
+		izquierda_derecha: { total: 0, count: 0 },
+		sistema_antisistema: { total: 0, count: 0 },
+		nacionalista_globalista: { total: 0, count: 0 }
 	};
 
 	for (const q of questions) {
@@ -103,10 +103,10 @@ export function calculateCandidateProfile(
 	}
 
 	const profile: Record<EjeKey, number> = {
-		'liberal_conservador': 0,
-		'izquierda_derecha': 0,
-		'sistema_antisistema': 0,
-		'nacionalista_globalista': 0
+		liberal_conservador: 0,
+		izquierda_derecha: 0,
+		sistema_antisistema: 0,
+		nacionalista_globalista: 0
 	};
 
 	for (const key of Object.keys(scores) as EjeKey[]) {
@@ -124,14 +124,14 @@ export function calculateEuclideanDistance(
 	p1: Record<EjeKey, number>,
 	p2: Record<EjeKey, number>
 ): number {
-	const axes = Object.keys(AXIS_KEYS).map(k => AXIS_KEYS[k as Eje]) as EjeKey[];
+	const axes = Object.keys(AXIS_KEYS).map((k) => AXIS_KEYS[k as Eje]) as EjeKey[];
 	let sumSquared = 0;
-	
+
 	for (const axis of axes) {
 		const diff = p1[axis] - p2[axis];
 		sumSquared += diff * diff;
 	}
-	
+
 	return Math.sqrt(sumSquared);
 }
 
