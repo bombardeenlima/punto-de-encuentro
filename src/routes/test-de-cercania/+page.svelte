@@ -404,7 +404,7 @@
 		</div>
 	{:else if currentQuestion}
 		<div
-			class="focus:ring-2 focus:ring-primary/20 focus:outline-none sm:rounded-md sm:border sm:border-border sm:bg-card sm:p-8"
+			class="focus:outline-none sm:rounded-md sm:border sm:border-border sm:bg-card sm:p-8"
 			bind:this={questionContainerRef}
 			tabindex="-1"
 		>
