@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
 	const RANGE = 32;
 	const GRID_STEP = 4;
 	const MAJOR_STEP = 8;
@@ -48,10 +46,6 @@
 		description: string;
 	};
 
-	const dispatch = createEventDispatcher<{
-		select: SelectDetail;
-	}>();
-
 	let {
 		x = $bindable(0),
 		y = $bindable(0),
@@ -60,8 +54,9 @@
 		label = 'Plano cartesiano',
 		narrative = $bindable<QuadrantMessage | null>(null),
 		singlePointMode = false,
-		describedBy = undefined as string | undefined
-	} = $props<{
+		describedBy = undefined as string | undefined,
+		onselect = undefined as ((detail: SelectDetail) => void) | undefined
+	}: {
 		x?: number;
 		y?: number;
 		points?: PlanePoint[];
@@ -70,7 +65,8 @@
 		narrative?: QuadrantMessage | null;
 		singlePointMode?: boolean;
 		describedBy?: string;
-	}>();
+		onselect?: (detail: SelectDetail) => void;
+	} = $props();
 
 	let svgEl = $state<SVGSVGElement | null>(null);
 	let hovered = $state<HoveredPoint | null>(null);
@@ -441,7 +437,7 @@
 		if (!point) return;
 		x = point.x;
 		y = point.y;
-		dispatch('select', point);
+		if (onselect) onselect(point);
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
@@ -466,7 +462,7 @@
 		}
 		if (handled) {
 			event.preventDefault();
-			dispatch('select', { x, y });
+			if (onselect) onselect({ x, y });
 		}
 	}
 

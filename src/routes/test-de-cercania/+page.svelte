@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RadarChart from "$lib/components/RadarChart.svelte";
+	import RadarChart from '$lib/components/RadarChart.svelte';
 	import { Button } from '$lib';
 	import type { PageData } from './$types';
 	import {
@@ -97,8 +97,8 @@
 		const base: PlotPoint[] = [...partyPoints];
 		if (coordinates) {
 			base.push({
-				x: planeX,
-				y: planeY,
+				x: coordinates.x,
+				y: coordinates.y,
 				label: 'Tu resultado',
 				isUser: true
 			});
@@ -106,9 +106,6 @@
 		return base;
 	});
 
-	let planeX = $state(0);
-	let planeY = $state(0);
-	let planeNarrative = $state<QuadrantNarrative | null>(null);
 	let resultsSection = $state<HTMLElement | null>(null);
 	let hasAnnouncedResults = $state(false);
 	let showAllCandidates = $state(false);
@@ -163,13 +160,6 @@
 	let questionContainerRef = $state<HTMLDivElement | null>(null);
 
 	$effect(() => {
-		if (showResults && coordinates) {
-			planeX = coordinates.x;
-			planeY = coordinates.y;
-		} else if (!showResults) {
-			planeX = 0;
-			planeY = 0;
-		}
 		if (!showResults) {
 			hasAnnouncedResults = false;
 		}
@@ -188,7 +178,7 @@
 	});
 
 	function recordAnswer(questionId: string, value: number | null) {
-		answers = { ...answers, [questionId]: value };
+		answers[questionId] = value;
 	}
 
 	function goNext() {
@@ -376,11 +366,28 @@
 									></div>
 								</div>
 
-								<!-- Thumb / Dot -->
+								<!-- Candidate dots (Top 3) -->
+								{#each nearestParties.slice(0, 3) as candidate, i}
+									{@const candidateVal = (axis.key === 'izquierda_derecha' ? candidate.position.izquierda_derecha : axis.key === 'liberal_conservador' ? candidate.position.liberal_conservador : axis.key === 'sistema_antisistema' ? candidate.position.sistema_antisistema : candidate.position.nacionalista_globalista) ?? 0}
+									<div
+										class="group absolute z-10 h-3.5 w-3.5 -translate-x-1/2 cursor-pointer rounded-full border-2 border-background shadow-sm transition-all duration-700 ease-out hover:z-30"
+										style="left: {((candidateVal + 1) / 2) * 100}%; background-color: hsl({(i * 360) / nearestParties.length}, 80%, 55%);"
+									>
+										<span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-1 -translate-x-1/2 whitespace-nowrap rounded bg-foreground/90 px-1.5 py-0.5 text-[10px] font-medium text-background opacity-0 transition-opacity group-hover:opacity-100">
+											{candidate.label}
+										</span>
+									</div>
+								{/each}
+
+								<!-- Thumb / Dot (User) -->
 								<div
-									class="absolute z-20 h-5 w-5 -translate-x-1/2 rounded-full border-[3px] border-background bg-primary shadow-md transition-all duration-700 ease-out"
+									class="group absolute z-20 h-5 w-5 -translate-x-1/2 cursor-pointer rounded-full border-[3px] border-background bg-primary shadow-md transition-all duration-700 ease-out hover:z-30"
 									style="left: {((axis.value + 1) / 2) * 100}%"
-								></div>
+								>
+									<span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-1 -translate-x-1/2 whitespace-nowrap rounded bg-foreground/90 px-1.5 py-0.5 text-[10px] font-medium text-background opacity-0 transition-opacity group-hover:opacity-100">
+										Tú
+									</span>
+								</div>
 							</div>
 						</div>
 					{/each}
