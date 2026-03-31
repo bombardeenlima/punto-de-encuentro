@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { ArrowRight, Activity, Globe, Scale, Maximize2 } from '@lucide/svelte';
 </script>
-
+<svelte:head>
+        <title>Punto de Encuentro | Voto Estratégico 2026</title>
+</svelte:head>
 <div class="mx-auto max-w-4xl space-y-24 py-12">
 	<!-- Hero Centralized Minimal -->
 	<section class="animate-in space-y-8 text-center duration-700 fade-in slide-in-from-bottom-8">
