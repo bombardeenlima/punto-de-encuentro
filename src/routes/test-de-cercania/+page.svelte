@@ -223,6 +223,9 @@
 			const answerIndex = parseInt(event.key) - 1;
 			if (answerIndex < answerChoices.length) {
 				recordAnswer(currentQuestion.id, answerChoices[answerIndex].value);
+				setTimeout(() => {
+					goNext();
+				}, 150);
 			}
 		}
 
@@ -239,7 +242,7 @@
 
 <svelte:window onkeydown={handleKeyboardNavigation} />
 
-<div class="mx-auto max-w-5xl px-6 py-16">
+<div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-16">
 	<div class="mb-12">
 		<Button
 			variant="ghost"
@@ -401,7 +404,7 @@
 		</div>
 	{:else if currentQuestion}
 		<div
-			class="rounded-md border border-border bg-card p-8 focus:ring-2 focus:ring-primary/20 focus:outline-none"
+			class="focus:ring-2 focus:ring-primary/20 focus:outline-none sm:rounded-md sm:border sm:border-border sm:bg-card sm:p-8"
 			bind:this={questionContainerRef}
 			tabindex="-1"
 		>
@@ -444,7 +447,13 @@
 								class="sr-only"
 								value={option.value}
 								checked={currentAnswer === option.value}
-								onchange={() => recordAnswer(currentQuestion.id, option.value)}
+								onchange={() => {
+									recordAnswer(currentQuestion.id, option.value);
+									setTimeout(() => {
+										// Small delay to let user see selection
+										goNext();
+									}, 150);
+								}}
 							/>
 							<span class="flex items-center gap-2">
 								<kbd
