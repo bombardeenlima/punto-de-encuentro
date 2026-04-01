@@ -1,5 +1,18 @@
 <script lang="ts">
 	import { ArrowRight, Activity, Globe, Scale, Maximize2 } from '@lucide/svelte';
+
+	const candidatos = [
+		{ name: 'Carlos Álvarez', image: 'https://upload.wikimedia.org/wikipedia/commons/a/af/Carlos_%C3%81lvarez_2025_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Carlos_%C3%81lvarez_(humorista)#' },
+		{ name: 'César Acuña', image: 'https://upload.wikimedia.org/wikipedia/commons/3/3d/C%C3%89SAR_ACU%C3%91A_PERALTA-WIKIPEDIA-PERFIL.jpg', wikipedia: 'https://es.wikipedia.org/wiki/C%C3%A9sar_Acu%C3%B1a#' },
+		{ name: 'Jorge Nieto', image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Jorge_Nieto.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Jorge_Nieto#' },
+		{ name: 'Keiko Fujimori', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Keiko_Fujimori_2.jpg/960px-Keiko_Fujimori_2.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Keiko_Fujimori#' },
+		{ name: 'Rafael López Aliaga', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Aliaga.jpg/960px-Aliaga.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Rafael_L%C3%B3pez-Aliaga#' },
+		{ name: 'Alfonso López Chau', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Alfonso_L%C3%B3pez-Chau.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Alfonso_L%C3%B3pez-Chau#' },
+		{ name: 'Ricardo Belmont', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Ricardo_Belmont_3.jpg/960px-Ricardo_Belmont_3.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Ricardo_Belmont#' },
+		{ name: 'Roberto Sánchez', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Roberto_Sanchez_Palomino_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Roberto_S%C3%A1nchez_Palomino#' },
+		{ name: 'Wolfgang Grozo', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Wolfgang_Grozo_Costa.png/960px-Wolfgang_Grozo_Costa.png', wikipedia: 'https://es.wikipedia.org/wiki/Wolfgang_Grozo#' },
+		{ name: 'Yonhy Lescano', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Yonhy_Lescano_2012_%28cropped%29.jpg/960px-Yonhy_Lescano_2012_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Yonhy_Lescano#' }
+	];
 </script>
 <svelte:head>
         <title>Voto Estratégico - 2026</title>
@@ -25,7 +38,7 @@
 		<div class="pt-4">
 			<a
 				href="/test-de-cercania"
-				class="inline-flex rounded-full bg-foreground px-8 py-4 font-bold text-background shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
+				class="inline-flex rounded-full bg-primary px-8 py-4 font-bold text-primary-foreground shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
 			>
 				→ Encontrar mi candidato
 			</a>
@@ -82,21 +95,21 @@
 			</p>
 			<div class="grid gap-6 sm:grid-cols-3">
 				<div>
-					<span class="mb-2 block text-4xl font-black text-muted-foreground/30">01</span>
+					<span class="mb-2 block text-4xl font-black text-primary">01</span>
 					<h3 class="mb-2 font-bold">Toma posición</h3>
 					<p class="text-sm text-muted-foreground">
 						Respondes una serie de afirmaciones sobre economía y sociedad.
 					</p>
 				</div>
 				<div>
-					<span class="mb-2 block text-4xl font-black text-muted-foreground/30">02</span>
+					<span class="mb-2 block text-4xl font-black text-primary">02</span>
 					<h3 class="mb-2 font-bold">Te ubicamos</h3>
 					<p class="text-sm text-muted-foreground">
 						Nuestro modelo mapea tus respuestas en cuatro dimensiones reales.
 					</p>
 				</div>
 				<div>
-					<span class="mb-2 block text-4xl font-black text-muted-foreground/30">03</span>
+					<span class="mb-2 block text-4xl font-black text-primary">03</span>
 					<h3 class="mb-2 font-bold">Top 10 coincidencias</h3>
 					<p class="text-sm text-muted-foreground">
 						Solo mostramos candidatos viables. Ordenados por distancia ideológica.
@@ -132,6 +145,30 @@
 			</div>
 		</div>
 	</section>
+
+	<hr class="border-border/60" />
+
+	<!-- Candidates Section -->
+	<section class="space-y-8">
+		<div class="text-center">
+			<h2 class="text-3xl font-bold tracking-tight">Candidatos Viables</h2>
+			<p class="mt-4 text-muted-foreground">
+				Te conectamos con las opciones que realmente importan en esta elección.
+			</p>
+		</div>
+		<div class="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
+			{#each candidatos as candidato}
+				<a href="{candidato.wikipedia}" target="_blank" rel="noopener noreferrer" class="group mx-auto flex flex-col items-center gap-3">
+					<div class="overflow-hidden rounded-full border-2 border-transparent shadow-md transition-all duration-300 group-hover:scale-105 group-hover:border-primary group-hover:shadow-lg">
+						<img src="{candidato.image}" alt="{candidato.name}" class="h-28 w-28 object-cover sm:h-32 sm:w-32" loading="lazy" />
+					</div>
+					<h3 class="text-center text-sm font-semibold group-hover:text-primary transition-colors">{candidato.name}</h3>
+				</a>
+			{/each}
+		</div>
+	</section>
+
+	<hr class="border-border/60" />
 
 	<!-- Filter & final CTA Combined -->
 	<section class="space-y-10 rounded-3xl bg-foreground p-10 text-center text-background md:p-16">
