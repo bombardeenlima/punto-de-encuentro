@@ -10,7 +10,7 @@
 		{ name: 'Alfonso López Chau', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Alfonso_L%C3%B3pez-Chau.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Alfonso_L%C3%B3pez-Chau#' },
 		{ name: 'Ricardo Belmont', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Ricardo_Belmont_3.jpg/960px-Ricardo_Belmont_3.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Ricardo_Belmont#' },
 		{ name: 'Roberto Sánchez', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Roberto_Sanchez_Palomino_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Roberto_S%C3%A1nchez_Palomino#' },
-		{ name: 'Wolfgang Grozo', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Wolfgang_Grozo_Costa.png/960px-Wolfgang_Grozo_Costa.png', wikipedia: 'https://es.wikipedia.org/wiki/Wolfgang_Grozo#' },
+		{ name: 'Marisol Pérez Tello', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/MarisolP%C3%A9rezTello.jpg/500px-MarisolP%C3%A9rezTello.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Marisol_P%C3%A9rez_Tello' },
 		{ name: 'Yonhy Lescano', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Yonhy_Lescano_2012_%28cropped%29.jpg/960px-Yonhy_Lescano_2012_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Yonhy_Lescano#' }
 	];
 </script>
