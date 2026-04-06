@@ -14,7 +14,10 @@
 		{ name: 'Yonhy Lescano', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Yonhy_Lescano_2012_%28cropped%29.jpg/960px-Yonhy_Lescano_2012_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Yonhy_Lescano#' }
 	];
 </script>
+
 <svelte:head>
+        <title>Voto Estratégico - 2026</title>
+</svelte:head>
 <div style="position: fixed; top: 20px; left: 20px; z-index: 50;">
   <a href="/ruta-al-pdf.pdf" target="_blank" rel="noopener noreferrer" 
      style="display: inline-block; 
@@ -32,8 +35,6 @@
     Transparencia
   </a>
 </div>
-        <title>Voto Estratégico - 2026</title>
-</svelte:head>
 <div class="mx-auto max-w-4xl space-y-24 py-12">
 	<!-- Hero Centralized Minimal -->
 	<section class="animate-in space-y-8 text-center duration-700 fade-in slide-in-from-bottom-8">
