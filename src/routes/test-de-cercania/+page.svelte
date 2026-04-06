@@ -340,7 +340,7 @@
 				</p>
 
 				<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-					{#each [{ key: 'izquierda_derecha', leftLabel: 'Derecha', rightLabel: 'Izquierda', value: userProfile.izquierda_derecha }, { key: 'liberal_conservador', leftLabel: 'Conservador', rightLabel: 'Liberal', value: userProfile.liberal_conservador }, { key: 'sistema_antisistema', leftLabel: 'Sistema', rightLabel: 'Antisistema', value: userProfile.sistema_antisistema }, { key: 'nacionalista_globalista', leftLabel: 'Nacionalista', rightLabel: 'Globalista', value: userProfile.nacionalista_globalista }] as axis}
+					{#each [{ key: 'izquierda_derecha', leftLabel: 'Derecha', rightLabel: 'Izquierda', value: userProfile.izquierda_derecha }, { key: 'liberal_conservador', leftLabel: 'Conservador', rightLabel: 'Liberal', value: userProfile.liberal_conservador }, { key: 'sistema_antisistema', leftLabel: 'Prosistema', rightLabel: 'Antisistema', value: userProfile.sistema_antisistema }, { key: 'nacionalista_globalista', leftLabel: 'Nacionalista', rightLabel: 'Globalista', value: userProfile.nacionalista_globalista }] as axis}
 						<div
 							class="flex flex-col gap-4 rounded-xl border border-border bg-background/50 p-5 shadow-sm"
 						>
