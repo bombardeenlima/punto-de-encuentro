@@ -32,7 +32,7 @@
                 'Nacionalista',
                 'Derecha',
                 'Liberal',
-                'Sistema',
+                'Prosistema',
                 'Globalista'
         ];
 
