@@ -15,6 +15,23 @@
 	];
 </script>
 <svelte:head>
+<div style="position: fixed; top: 20px; left: 20px; z-index: 50;">
+  <a href="/ruta-al-pdf.pdf" target="_blank" rel="noopener noreferrer" 
+     style="display: inline-block; 
+             background-color: black; 
+             color: white; 
+             padding: 8px 16px; 
+             border-radius: 20px; 
+             text-decoration: none;
+             font-size: 14px;
+             line-height: 1.5;
+             font-weight: 500;
+             transition: all 0.3s ease;
+             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+             white-space: nowrap;">
+    Transparencia
+  </a>
+</div>
         <title>Voto Estratégico - 2026</title>
 </svelte:head>
 <div class="mx-auto max-w-4xl space-y-24 py-12">
