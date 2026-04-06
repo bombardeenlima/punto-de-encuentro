@@ -1,8 +1,8 @@
 Pregunta,Muy de acuerdo significa,Eje,Código
 "Considero que, para frenar la ola de extorsiones y sicariato, el gobierno debería tener la facultad de suspender libertades (como toques de queda) por tiempo indefinido.",Conservador,Liberal-Conservador,Suspension_libertades_indefinida
 Considero que el matrimonio o unión civil entre personas del mismo sexo debería ser reconocido plenamente por la ley.,Liberal,Liberal-Conservador,Matrimonio_igualitario
-Considero que las leyes y políticas públicas deben realizarse sin influencia de creencias religiosas o la Iglesia,Liberal,Liberal-Conservador,Politicas_sin_influencia_religiosa
-"Considero que, mientras mis acciones no dañen directamente a terceros, el Estado no tiene derecho a intervenir en mi estilo de vida, lo que consumo o con quién me relaciono.",Liberal,Liberal-Conservador,Estado_no_interviene_estilo_vida
+Considero que las leyes y políticas públicas deben realizarse sin influencia de creencias religiosas o la Iglesia.,Liberal,Liberal-Conservador,Politicas_sin_influencia_religiosa
+"Considero que, mientras mis acciones no dañen directamente a terceros, el Estado no tiene derecho a intervenir en mi estilo de vida., lo que consumo o con quién me relaciono.",Liberal,Liberal-Conservador,Estado_no_interviene_estilo_vida
 "Preferiría un gobierno de “mano dura” que elimine la delincuencia, aunque limitara la independencia de poderes o ciertos derechos humanos.",Conservador,Liberal-Conservador,Gobierno_mano_dura
 Preferiría que la educación sexual de los niños dependa exclusivamente de la familia y no del Estado (escuelas y centros de estudios).,Conservador,Liberal-Conservador,Educacion_sexual_solo_familia
 Se debería aplicar la pena de muerte en el Perú.,Conservador,Liberal-Conservador,Pena_muerte
@@ -22,9 +22,9 @@ Considero que se necesitan cambios radicales en la policía para que el país me
 Considero que para solucionar los problemas del país es necesario reemplazar totalmente la Constitución actual por una nueva.,Antisistema,Sistema-Antisistema,Nueva_constitucion
 "Se debería prohibir que los políticos que ya han estado en el poder vuelvan a postular.",Antisistema,Sistema-Antisistema,Prohibir_politicos_repostulen
 Se debería reducir el sueldo de los congresistas.,Antisistema,Sistema-Antisistema,Reducir_sueldo_congresistas
-"Se debería permitir que los mineros informales sigan operando mientras tramitan su formalización en el Registro Integral de Formalización Minera (REINFO), incluso si todavía no cumplen con todos los requisitos ambientales.",Sistema,Sistema-Antisistema,Permitir_mineria_informal
+"Se debería permitir que los mineros informales sigan operando mientras tramitan su formalización en el Registro Integral de Formalización Minera (REINFO)., incluso si todavía no cumplen con todos los requisitos ambientales.",Sistema,Sistema-Antisistema,Permitir_mineria_informal
 Considero que el asilo político (protección que un país otorga a una persona perseguida por razones políticas para que pueda vivir allí sin ser devuelta a su país) es un peligro para el sistema de justicia nacional.,Nacionalista,Nacionalista-Globalista,Asilo_politico_peligro
-Considero que los tratados de libre comercio (TLC) son beneficiosos para el país, aunque hagan que los productores nacionales compitan con empresas extranjeras,Globalista,Nacionalista-Globalista,TLC_beneficiosos
+"Considero que los tratados de libre comercio (TLC) son beneficiosos para el país, aunque hagan que los productores nacionales compitan con empresas extranjeras.",Globalista,Nacionalista-Globalista,TLC_beneficiosos
 El Estado debería restringir la extracción de recursos naturales (minería o energía) por parte de empresas extranjeras.,Nacionalista,Nacionalista-Globalista,Restringir_empresas_extranjeras
 Se debería entregar la nacionalidad peruana a los migrantes que ya están dentro del país.,Globalista,Nacionalista-Globalista,Nacionalidad_migrantes
 La ley peruana debería estar por encima de los acuerdos internacionales, aunque esto implique abandonar organismos de derechos humanos.,Nacionalista,Nacionalista-Globalista,Ley_peruana_sobre_acuerdos
