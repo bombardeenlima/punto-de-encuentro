@@ -60,7 +60,7 @@
 		"n": 2,
 		"eje": "1",
 		"criterio": "protesta-social",
-		"pregunta": "Se debería reprimir inmediatamente las protestas, priorizando el orden público."
+		"pregunta": "Se debería controlar inmediatamente las protestas, priorizando el orden público."
 	},
 	{
 		"_id": "q10_aborto_libre",
@@ -144,21 +144,21 @@
 		"n": 2,
 		"eje": "1",
 		"criterio": "reforma-politica",
-		"pregunta": "Se debería prohibir que los políticos que ya han estado en el poder vuelvan a postular, para limpiar el sistema."
+		"pregunta": "Se debería prohibir que los políticos que ya han estado en el poder vuelvan a postular."
 	},
 	{
 		"_id": "q22_bajar_sueldo_congresistas",
 		"n": 2,
 		"eje": "0",
 		"criterio": "reforma-politica",
-		"pregunta": "Se debería reducir el sueldo de los congresistas para que solo personas con verdadera vocación de servicio ocupen esos cargos."
+		"pregunta": "Se debería reducir el sueldo de los congresistas."
 	},
 	{
 		"_id": "q23_reinfo_formalizacion",
 		"n": 2,
 		"eje": "0",
 		"criterio": "mineria-informal",
-		"pregunta": "Se debería permitir que los mineros informales sigan operando mientras tramitan su formalización (REINFO), incluso si todavía no cumplen con todos los requisitos ambientales."
+		"pregunta": "Se debería permitir que los mineros informales sigan operando mientras tramitan su formalización en el Registro Integral de Formalización Minera (REINFO), incluso si todavía no cumplen con todos los requisitos ambientales."
 	},
 	{
 		"_id": "q24_asilo_peligro_justicia",
@@ -172,7 +172,7 @@
 		"n": 2,
 		"eje": "0",
 		"criterio": "comercio-exterior",
-		"pregunta": "Considero que los TLC (tratados de libre comercio) son beneficiosos para el país aunque hagan que los productores nacionales compitan con empresas extranjeras."
+		"pregunta": "Considero que los tratados de libre comercio (TLC) son beneficiosos para el país, aunque hagan que los productores nacionales compitan con empresas extranjeras"
 	},
 	{
 		"_id": "q26_restringir_extraccion_extranjera_a",
@@ -193,6 +193,6 @@
 		"n": 2,
 		"eje": "1",
 		"criterio": "soberania",
-		"pregunta": "La ley peruana debería estar por encima de los acuerdos internacionales aunque esto implique abandonar organismos de derechos humanos."
+		"pregunta": "La ley peruana debería estar por encima de los acuerdos internacionales, aunque esto implique abandonar organismos de derechos humanos."
 	}
 ]
