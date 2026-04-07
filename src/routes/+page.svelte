@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { ArrowRight, Activity, Globe, Scale, Maximize2 } from '@lucide/svelte';
+	import { ArrowRight, Activity, Globe, Scale, Maximize2, Info, X } from '@lucide/svelte';
+	import { writable } from 'svelte/store';
+
+	let showPopup = false;
 
 	const candidatos = [
 		{ name: 'Carlos Álvarez', image: 'https://upload.wikimedia.org/wikipedia/commons/a/af/Carlos_%C3%81lvarez_2025_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Carlos_%C3%81lvarez_(humorista)#' },
@@ -169,7 +172,16 @@
 	<!-- Candidates Section -->
 	<section class="space-y-8">
 		<div class="text-center">
-			<h2 class="text-3xl font-bold tracking-tight">Candidatos Viables</h2>
+			<div class="flex items-center justify-center gap-2">
+				<h2 class="text-3xl font-bold tracking-tight">Candidatos Viables</h2>
+				<button 
+					on:click={() => showPopup = true}
+					class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer"
+					aria-label="Información sobre criterios de viabilidad"
+				>
+					<Info class="h-5 w-5 text-primary" />
+				</button>
+			</div>
 			<p class="mt-4 text-muted-foreground">
 				Te conectamos con las opciones que realmente importan en esta elección.
 			</p>
@@ -214,3 +226,29 @@
 		</div>
 	</section>
 </div>
+
+<!-- Popup Modal -->
+{#if showPopup}
+	<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+		<div class="bg-card border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl animate-in fade-in zoom-in duration-300">
+			<!-- Header con botón de cerrar -->
+			<div class="sticky top-0 bg-card border-b border-border flex items-center justify-between p-6 sm:p-8">
+				<h3 class="text-xl sm:text-2xl font-bold">Justificación de candidatos viables</h3>
+				<button
+					on:click={() => showPopup = false}
+					class="flex-shrink-0 p-2 hover:bg-muted rounded-lg transition-colors ml-4"
+					aria-label="Cerrar"
+				>
+					<X class="h-6 w-6 text-foreground" />
+				</button>
+			</div>
+
+			<!-- Contenido -->
+			<div class="p-6 sm:p-8 space-y-4 text-muted-foreground leading-relaxed">
+				<p>
+					Seleccionamos a los candidatos del top 10 con dos criterios simples. Primero, tomamos en cuenta las encuestas más recientes para incluir a quienes tienen mayores probabilidades de pasar a segunda vuelta. Segundo, priorizamos a aquellos sobre los que existe más información pública (entrevistas, debates y declaraciones), lo que nos permite calcular su posición con mayor precisión.
+				</p>
+			</div>
+		</div>
+	</div>
+{/if}
