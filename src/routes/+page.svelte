@@ -264,7 +264,10 @@
 		<div class="bg-card border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl animate-in fade-in zoom-in duration-300">
 			<!-- Header con botón de cerrar -->
 			<div class="sticky top-0 bg-card border-b border-border flex items-center justify-between p-6 sm:p-8">
-				<h3 class="text-xl sm:text-2xl font-bold">Económico</h3>
+				<div class="flex-1">
+					<h3 class="text-xl sm:text-2xl font-bold">Económico</h3>
+					<p class="text-sm text-muted-foreground mt-1">Sobre el rol del Estado en la economía</p>
+				</div>
 				<button
 					on:click={() => showEconomicPopup = false}
 					class="flex-shrink-0 p-2 hover:bg-muted rounded-lg transition-colors ml-4"
@@ -276,9 +279,6 @@
 
 			<!-- Contenido -->
 			<div class="p-6 sm:p-8 space-y-6 text-muted-foreground leading-relaxed">
-				<div>
-					<p class="text-foreground font-semibold mb-4">Sobre el rol del Estado en la economía</p>
-				</div>
 
 				<div>
 					<h4 class="text-foreground font-bold mb-3">Izquierda</h4>
