@@ -154,8 +154,8 @@
 				aria-label="Información sobre el eje económico"
 			>
 				<Scale class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
-				<h3 class="mb-2 text-sm font-bold">Izquierda — Derecha</h3>
-				<p class="text-xs text-muted-foreground">Economía, regulación, Estado.</p>
+				<h3 class="mb-2 text-sm font-bold">Económico</h3>
+				<p class="text-xs text-muted-foreground">Sobre el rol del Estado en la economía.</p>
 			</button>
 			<button 
 				on:click={() => showSocialPopup = true}
@@ -163,8 +163,8 @@
 				aria-label="Información sobre el eje social"
 			>
 				<Activity class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
-				<h3 class="mb-2 text-sm font-bold">Liberal — Conservador</h3>
-				<p class="text-xs text-muted-foreground">Cambio social, derechos, religión.</p>
+				<h3 class="mb-2 text-sm font-bold">Social</h3>
+				<p class="text-xs text-muted-foreground">Sobre el rol del Estado en la sociedad.</p>
 			</button>
 			<button 
 				on:click={() => showInternationalPopup = true}
@@ -172,8 +172,8 @@
 				aria-label="Información sobre el eje internacional"
 			>
 				<Globe class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
-				<h3 class="mb-2 text-sm font-bold">Nac. — Globalista</h3>
-				<p class="text-xs text-muted-foreground">Soberanía, libre comercio, integración.</p>
+				<h3 class="mb-2 text-sm font-bold">Internacional</h3>
+				<p class="text-xs text-muted-foreground">Sobre el rol del Estado en la comunidad internacional.</p>
 			</button>
 			<button 
 				on:click={() => showSystemPopup = true}
@@ -181,8 +181,8 @@
 				aria-label="Información sobre el eje del sistema"
 			>
 				<Maximize2 class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
-				<h3 class="mb-2 text-sm font-bold">Sistema — Antisist.</h3>
-				<p class="text-xs text-muted-foreground">Renovación vs. continuidad.</p>
+				<h3 class="mb-2 text-sm font-bold">Sistema</h3>
+				<p class="text-xs text-muted-foreground">Sobre la conformidad con el sistema actual.</p>
 			</button>
 		</div>
 	</section>
