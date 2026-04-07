@@ -3,6 +3,7 @@
 	import { writable } from 'svelte/store';
 
 	let showPopup = false;
+	let showEconomicPopup = false;
 
 	const candidatos = [
 		{ name: 'Carlos Álvarez', image: 'https://upload.wikimedia.org/wikipedia/commons/a/af/Carlos_%C3%81lvarez_2025_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Carlos_%C3%81lvarez_(humorista)#' },
@@ -144,11 +145,15 @@
 	<section class="space-y-8">
 		<h2 class="text-center text-3xl font-bold">Un mapa político más honesto</h2>
 		<div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-			<div class="flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center">
-				<Scale class="mb-4 h-8 w-8 text-primary" />
+			<button 
+				on:click={() => showEconomicPopup = true}
+				class="flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center hover:bg-muted transition-colors cursor-pointer group"
+				aria-label="Información sobre el eje económico"
+			>
+				<Scale class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
 				<h3 class="mb-2 text-sm font-bold">Izquierda — Derecha</h3>
 				<p class="text-xs text-muted-foreground">Economía, regulación, Estado.</p>
-			</div>
+			</button>
 			<div class="flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center">
 				<Activity class="mb-4 h-8 w-8 text-primary" />
 				<h3 class="mb-2 text-sm font-bold">Liberal — Conservador</h3>
@@ -227,7 +232,7 @@
 	</section>
 </div>
 
-<!-- Popup Modal -->
+<!-- Popup Modal - Candidatos Viables -->
 {#if showPopup}
 	<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
 		<div class="bg-card border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl animate-in fade-in zoom-in duration-300">
@@ -248,6 +253,68 @@
 				<p>
 					Seleccionamos a los candidatos del top 10 con dos criterios simples. Primero, tomamos en cuenta las encuestas más recientes para incluir a quienes tienen mayores probabilidades de pasar a segunda vuelta. Segundo, priorizamos a aquellos sobre los que existe más información pública (entrevistas, debates y declaraciones), lo que nos permite calcular su posición con mayor precisión.
 				</p>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- Popup Modal - Eje Económico -->
+{#if showEconomicPopup}
+	<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+		<div class="bg-card border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl animate-in fade-in zoom-in duration-300">
+			<!-- Header con botón de cerrar -->
+			<div class="sticky top-0 bg-card border-b border-border flex items-center justify-between p-6 sm:p-8">
+				<h3 class="text-xl sm:text-2xl font-bold">Económico</h3>
+				<button
+					on:click={() => showEconomicPopup = false}
+					class="flex-shrink-0 p-2 hover:bg-muted rounded-lg transition-colors ml-4"
+					aria-label="Cerrar"
+				>
+					<X class="h-6 w-6 text-foreground" />
+				</button>
+			</div>
+
+			<!-- Contenido -->
+			<div class="p-6 sm:p-8 space-y-6 text-muted-foreground leading-relaxed">
+				<div>
+					<p class="text-foreground font-semibold mb-4">Sobre el rol del Estado en la economía</p>
+				</div>
+
+				<div>
+					<h4 class="text-foreground font-bold mb-3">Izquierda</h4>
+					<ul class="space-y-2 ml-4">
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Mayor intervención del Estado</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Redistribución de la riqueza</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Fortalecimiento de bienes y servicios públicos</span>
+						</li>
+					</ul>
+				</div>
+
+				<div>
+					<h4 class="text-foreground font-bold mb-3">Derecha</h4>
+					<ul class="space-y-2 ml-4">
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Libre mercado</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Promoción de la inversión privada</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Reducción del tamaño del Estado</span>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
