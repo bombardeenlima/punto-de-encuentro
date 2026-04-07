@@ -150,49 +150,49 @@
 		<div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
 			<button 
 				on:click={() => showEconomicPopup = true}
-				class="relative flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center hover:bg-muted transition-colors cursor-pointer group"
+				class="relative flex flex-col items-center rounded-2xl bg-muted/50 p-8 text-center hover:bg-muted transition-colors cursor-pointer group min-h-56"
 				aria-label="Información sobre el eje económico"
 			>
 				<Scale class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
 				<h3 class="mb-2 text-sm font-bold">Económico</h3>
-				<p class="text-xs text-muted-foreground">Sobre el rol del Estado en la economía.</p>
-				<div class="absolute bottom-3 right-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">
+				<p class="text-xs text-muted-foreground flex-grow">Sobre el rol del Estado en la economía.</p>
+				<div class="mt-6 inline-flex items-center gap-1 text-xs font-semibold text-primary">
 					Ver más <ArrowRight class="h-3.5 w-3.5" />
 				</div>
 			</button>
 			<button 
 				on:click={() => showSocialPopup = true}
-				class="relative flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center hover:bg-muted transition-colors cursor-pointer group"
+				class="relative flex flex-col items-center rounded-2xl bg-muted/50 p-8 text-center hover:bg-muted transition-colors cursor-pointer group min-h-56"
 				aria-label="Información sobre el eje social"
 			>
 				<Activity class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
 				<h3 class="mb-2 text-sm font-bold">Social</h3>
-				<p class="text-xs text-muted-foreground">Sobre el rol del Estado en la sociedad.</p>
-				<div class="absolute bottom-3 right-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">
+				<p class="text-xs text-muted-foreground flex-grow">Sobre el rol del Estado en la sociedad.</p>
+				<div class="mt-6 inline-flex items-center gap-1 text-xs font-semibold text-primary">
 					Ver más <ArrowRight class="h-3.5 w-3.5" />
 				</div>
 			</button>
 			<button 
 				on:click={() => showInternationalPopup = true}
-				class="relative flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center hover:bg-muted transition-colors cursor-pointer group"
+				class="relative flex flex-col items-center rounded-2xl bg-muted/50 p-8 text-center hover:bg-muted transition-colors cursor-pointer group min-h-56"
 				aria-label="Información sobre el eje internacional"
 			>
 				<Globe class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
 				<h3 class="mb-2 text-sm font-bold">Internacional</h3>
-				<p class="text-xs text-muted-foreground">Sobre el rol del Estado en la comunidad internacional.</p>
-				<div class="absolute bottom-3 right-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">
+				<p class="text-xs text-muted-foreground flex-grow">Sobre el rol del Estado en la comunidad internacional.</p>
+				<div class="mt-6 inline-flex items-center gap-1 text-xs font-semibold text-primary">
 					Ver más <ArrowRight class="h-3.5 w-3.5" />
 				</div>
 			</button>
 			<button 
 				on:click={() => showSystemPopup = true}
-				class="relative flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center hover:bg-muted transition-colors cursor-pointer group"
+				class="relative flex flex-col items-center rounded-2xl bg-muted/50 p-8 text-center hover:bg-muted transition-colors cursor-pointer group min-h-56"
 				aria-label="Información sobre el eje del sistema"
 			>
 				<Maximize2 class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
 				<h3 class="mb-2 text-sm font-bold">Sistema</h3>
-				<p class="text-xs text-muted-foreground">Sobre la conformidad con el sistema actual.</p>
-				<div class="absolute bottom-3 right-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">
+				<p class="text-xs text-muted-foreground flex-grow">Sobre la conformidad con el sistema actual.</p>
+				<div class="mt-6 inline-flex items-center gap-1 text-xs font-semibold text-primary">
 					Ver más <ArrowRight class="h-3.5 w-3.5" />
 				</div>
 			</button>
