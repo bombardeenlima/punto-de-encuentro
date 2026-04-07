@@ -5,6 +5,7 @@
 	let showPopup = false;
 	let showEconomicPopup = false;
 	let showSocialPopup = false;
+	let showInternationalPopup = false;
 
 	const candidatos = [
 		{ name: 'Carlos Álvarez', image: 'https://upload.wikimedia.org/wikipedia/commons/a/af/Carlos_%C3%81lvarez_2025_%28cropped%29.jpg', wikipedia: 'https://es.wikipedia.org/wiki/Carlos_%C3%81lvarez_(humorista)#' },
@@ -164,11 +165,15 @@
 				<h3 class="mb-2 text-sm font-bold">Liberal — Conservador</h3>
 				<p class="text-xs text-muted-foreground">Cambio social, derechos, religión.</p>
 			</button>
-			<div class="flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center">
-				<Globe class="mb-4 h-8 w-8 text-primary" />
+			<button 
+				on:click={() => showInternationalPopup = true}
+				class="flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center hover:bg-muted transition-colors cursor-pointer group"
+				aria-label="Información sobre el eje internacional"
+			>
+				<Globe class="mb-4 h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
 				<h3 class="mb-2 text-sm font-bold">Nac. — Globalista</h3>
 				<p class="text-xs text-muted-foreground">Soberanía, libre comercio, integración.</p>
-			</div>
+			</button>
 			<div class="flex flex-col items-center rounded-2xl bg-muted/50 p-6 text-center">
 				<Maximize2 class="mb-4 h-8 w-8 text-primary" />
 				<h3 class="mb-2 text-sm font-bold">Sistema — Antisist.</h3>
@@ -379,6 +384,68 @@
 						<li class="flex items-start gap-3">
 							<span class="text-primary font-bold mt-0.5">•</span>
 							<span>Defensa de valores tradicionales</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- Popup Modal - Eje Internacional -->
+{#if showInternationalPopup}
+	<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+		<div class="bg-card border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl animate-in fade-in zoom-in duration-300">
+			<!-- Header con botón de cerrar -->
+			<div class="sticky top-0 bg-card border-b border-border flex items-center justify-between p-6 sm:p-8">
+				<div class="flex-1">
+					<h3 class="text-xl sm:text-2xl font-bold">Internacional</h3>
+					<p class="text-sm text-muted-foreground mt-1">Sobre el rol del Estado en la comunidad internacional</p>
+				</div>
+				<button
+					on:click={() => showInternationalPopup = false}
+					class="flex-shrink-0 p-2 hover:bg-muted rounded-lg transition-colors ml-4"
+					aria-label="Cerrar"
+				>
+					<X class="h-6 w-6 text-foreground" />
+				</button>
+			</div>
+
+			<!-- Contenido -->
+			<div class="p-6 sm:p-8 space-y-6 text-muted-foreground leading-relaxed">
+
+				<div>
+					<h4 class="text-foreground font-bold mb-3">Nacionalista</h4>
+					<ul class="space-y-2 ml-4">
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Protección de la producción local</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Migración limitada y estricta</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Menor dependencia de organismos internacionales</span>
+						</li>
+					</ul>
+				</div>
+
+				<div>
+					<h4 class="text-foreground font-bold mb-3">Globalista</h4>
+					<ul class="space-y-2 ml-4">
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Libre comercio internacional</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Migración y fronteras abiertas</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-primary font-bold mt-0.5">•</span>
+							<span>Participación en organismos internacionales</span>
 						</li>
 					</ul>
 				</div>
