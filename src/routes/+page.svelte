@@ -26,7 +26,7 @@
         <title>Voto Estratégico - 2026</title>
 </svelte:head>
 <div style="position: fixed; top: 20px; left: 20px; z-index: 50;">
-  <a href="/ruta-al-pdf.pdf" target="_blank" rel="noopener noreferrer" 
+  <a href="/src/lib/assets/Informe de Transparencia - Voto Estratégico 032026.pdf" target="_blank" rel="noopener noreferrer" 
      style="display: inline-block; 
              background-color: black; 
              color: white; 
