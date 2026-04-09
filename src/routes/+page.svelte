@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ArrowRight, Activity, Globe, Scale, Maximize2, Info, X } from '@lucide/svelte';
+	import { base } from '$app/paths';
 	import { writable } from 'svelte/store';
 
 	let showPopup = false;
@@ -26,7 +27,7 @@
         <title>Voto Estratégico - 2026</title>
 </svelte:head>
 <div style="position: fixed; top: 20px; left: 20px; z-index: 50;">
-	<a href="/Informe%20de%20Transparencia%20-%20Voto%20Estrat%C3%A9gico%20032026%20%281%29.pdf" target="_blank" rel="noopener noreferrer" 
+	<a href={`${base}/informe-transparencia-voto-estrategico-2026.pdf`} target="_blank" rel="noopener noreferrer" 
      style="display: inline-block; 
              background-color: black; 
              color: white; 
