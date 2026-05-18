@@ -5,9 +5,9 @@
 	let { children } = $props();
 
 	const siteName = 'Voto Estrategico';
-	const pageTitle = 'Voto Estrategico - 2026';
+	const pageTitle = 'Voto Estrategico - Segunda Vuelta 2026';
 	const pageDescription =
-		'Responde preguntas sobre tus posiciones y encuentra a los candidatos mas cercanos con viabilidad real.';
+		'Dos candidatos, un voto. Descubrí cuál de los dos está más cerca de tus posiciones. Votar nulo es votar por ambos.';
 	const socialImage = '/social-preview.jpeg';
 </script>
 

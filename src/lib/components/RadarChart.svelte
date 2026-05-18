@@ -26,15 +26,15 @@
 
 	// Los 8 vértices
 	const labels = [
-                'Izquierda',
-                'Conservador',
-                'Antisistema',
-                'Nacionalista',
-                'Derecha',
-                'Liberal',
-                'Prosistema',
-                'Globalista'
-        ];
+		'Izquierda',
+		'Conservador',
+		'Antisistema',
+		'Nacionalista',
+		'Derecha',
+		'Liberal',
+		'Prosistema',
+		'Globalista'
+	];
 
 	function getRadarData(pos: any) {
 		const leftOrRight = pos.izquierda_derecha ?? 0;
@@ -43,15 +43,15 @@
 		const nacOrGlob = pos.nacionalista_globalista ?? 0;
 
 		return [
-                        Math.max(0, leftOrRight), // Izquierda (> 0)
-                        Math.max(0, -libOrCon), // Conservador (< 0)
-                        Math.max(0, sysOrAnti), // Antisistema (> 0)
-                        Math.max(0, -nacOrGlob), // Nacionalista (< 0)
-                        Math.max(0, -leftOrRight), // Derecha (< 0)
-                        Math.max(0, libOrCon), // Liberal (> 0)
-                        Math.max(0, -sysOrAnti), // Sistema (< 0)
-                        Math.max(0, nacOrGlob) // Globalista (> 0)
-                ];
+			Math.max(0, leftOrRight), // Izquierda (> 0)
+			Math.max(0, -libOrCon), // Conservador (< 0)
+			Math.max(0, sysOrAnti), // Antisistema (> 0)
+			Math.max(0, -nacOrGlob), // Nacionalista (< 0)
+			Math.max(0, -leftOrRight), // Derecha (< 0)
+			Math.max(0, libOrCon), // Liberal (> 0)
+			Math.max(0, -sysOrAnti), // Sistema (< 0)
+			Math.max(0, nacOrGlob) // Globalista (> 0)
+		];
 	}
 
 	// Generar un color único para cada participante iterando en la rueda de color HSL
