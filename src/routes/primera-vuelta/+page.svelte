@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ArrowRight, Activity, Globe, Scale, Maximize2, Info, X } from '@lucide/svelte';
-	import { base } from '$app/paths';
+	import Header from '$lib/components/Header.svelte';
 
 	let showPopup = $state(false);
 	let showEconomicPopup = $state(false);
@@ -73,28 +73,14 @@
 <svelte:head>
 	<title>Voto Estratégico - Primera Vuelta 2026</title>
 </svelte:head>
-<div style="position: fixed; top: 20px; left: 20px; z-index: 50;">
-	<a
-		href={`${base}/informe-transparencia-voto-estrategico-2026.pdf`}
-		target="_blank"
-		rel="noopener noreferrer"
-		style="display: inline-block; 
-             background-color: black; 
-             color: white; 
-             padding: 8px 16px; 
-             border-radius: 20px; 
-             text-decoration: none;
-             font-size: 14px;
-             line-height: 1.5;
-             font-weight: 500;
-             transition: all 0.3s ease;
-             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-             white-space: nowrap;"
-	>
-		Transparencia
-	</a>
-</div>
-<div class="mx-auto max-w-4xl space-y-24 py-12">
+<Header
+	className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-black sm:px-10 sm:py-7"
+	linkClass="rounded-full border border-black/10 bg-white/85 px-4 py-2 text-black shadow-[0_2px_8px_rgba(0,0,0,0.08)] backdrop-blur-md transition-colors hover:bg-white"
+	menuButtonClass="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white/85 text-black shadow-[0_2px_8px_rgba(0,0,0,0.08)] backdrop-blur-md transition-colors hover:bg-white"
+	mobilePanelClass="absolute right-0 mt-3 flex min-w-[13rem] flex-col gap-2 rounded-3xl border border-black/10 bg-white/95 p-3 text-sm font-medium text-black shadow-[0_18px_50px_rgba(18,23,38,0.12)] backdrop-blur-xl"
+	mobileLinkClass="rounded-2xl border border-black/10 bg-black/4 px-4 py-3 transition-colors hover:bg-black/7"
+/>
+<div class="mx-auto max-w-4xl space-y-24 px-5 pb-12 pt-28 sm:px-10 sm:pt-32">
 	<!-- Hero Centralized Minimal -->
 	<section class="animate-in space-y-8 text-center duration-700 fade-in slide-in-from-bottom-8">
 		<div

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 
@@ -9,6 +10,8 @@
 	const pageDescription =
 		'Dos candidatos, un voto. Descubrí cuál de los dos está más cerca de tus posiciones. Votar nulo es votar por ambos.';
 	const socialImage = '/social-preview.jpeg';
+	const isHome = $derived(page.url.pathname === '/');
+	const isFullBleed = $derived(isHome || page.url.pathname === '/test');
 </script>
 
 <svelte:head>
@@ -34,8 +37,8 @@
 <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
 
 <div class="min-h-screen bg-background text-foreground">
-	<div class="mx-auto max-w-5xl px-4 py-10">
-		<main id="main-content" class="space-y-6">
+	<div class={isFullBleed ? '' : 'mx-auto max-w-5xl px-4 py-10'}>
+		<main id="main-content" class={isFullBleed ? '' : 'space-y-6'}>
 			{@render children?.()}
 		</main>
 	</div>
