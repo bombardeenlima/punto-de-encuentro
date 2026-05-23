@@ -8,14 +8,17 @@
 </svelte:head>
 
 <section class="relative flex min-h-screen items-center justify-center overflow-hidden bg-black text-white">
-	<img
-		src="/final.GIF"
-		alt=""
+	<video
+		src="/final.webm"
+		poster="/final-poster.jpg"
+		autoplay
+		muted
+		loop
+		playsinline
 		aria-hidden="true"
 		class="absolute inset-0 h-full w-full object-cover"
 		draggable="false"
-		fetchpriority="high"
-	/>
+	></video>
 	<div class="absolute inset-0 bg-black/40"></div>
 	<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_12%,rgba(0,0,0,0.45)_100%)]"></div>
 
