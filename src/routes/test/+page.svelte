@@ -44,6 +44,7 @@
 	let currentIndex = $state(0);
 	let votes = $state<Record<string, CandidateId>>({});
 	let showResults = $state(false);
+	let showInfo = $state(false);
 	let isAdvancing = $state(false);
 	let advanceTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -137,6 +138,14 @@
 		currentIndex -= 1;
 	}
 
+	function toggleInfo() {
+		showInfo = !showInfo;
+	}
+
+	function closeInfo() {
+		showInfo = false;
+	}
+
 	function restartTest() {
 		if (advanceTimeout) {
 			clearTimeout(advanceTimeout);
@@ -152,6 +161,13 @@
 	}
 
 	function handleKeyboard(event: KeyboardEvent) {
+		if (showInfo) {
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				closeInfo();
+			}
+			return;
+		}
 		if (showResults) return;
 		if (!currentQuestion) return;
 		const [first, second] = optionOrder(currentQuestion);
@@ -329,15 +345,43 @@
 				<div class="test-footer-actions">
 				<button
 					type="button"
-					class="test-info"
+					class="test-back-btn"
 					onclick={goBack}
 					disabled={currentIndex === 0}
 					aria-label="Volver a la pregunta anterior"
+				>
+					←
+				</button>
+				<button
+					type="button"
+					class="test-info"
+					onclick={toggleInfo}
+					aria-label="Más información sobre este tema"
 				>
 					? Más información
 				</button>
 				</div>
 			</div>
+
+			{#if showInfo && currentQuestion.info}
+				<div
+					class="info-overlay"
+					onclick={closeInfo}
+					onkeydown={(e) => e.key === 'Escape' && closeInfo()}
+					role="button"
+					tabindex="-1"
+					aria-label="Cerrar información"
+				>
+					<div class="info-sheet" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="dialog" aria-modal="true" tabindex="-1">
+						<div class="info-sheet-header">
+							<h2>{currentQuestion.tema}</h2>
+							<button type="button" class="info-close" onclick={closeInfo} aria-label="Cerrar">✕</button>
+						</div>
+						<p class="info-sheet-body">{currentQuestion.info}</p>
+						<button type="button" class="info-dismiss" onclick={closeInfo}>Entendido</button>
+					</div>
+				</div>
+			{/if}
 
 			<p class="test-shortcuts max-sm:hidden">
 				Usa <kbd>1</kbd> y <kbd>2</kbd> para responder. <kbd>←</kbd> vuelve a la pregunta anterior.
@@ -809,6 +853,116 @@
 		transform: none;
 	}
 
+	.test-back-btn {
+		border: none;
+		border-radius: 999px;
+		background: rgba(12, 12, 12, 0.045);
+		backdrop-filter: blur(8px);
+		padding: 0.7rem 0.85rem;
+		font-size: 1.1rem;
+		cursor: pointer;
+		transition:
+			transform 180ms ease,
+			background-color 180ms ease;
+	}
+
+	.test-back-btn:hover:not(:disabled) {
+		transform: translateY(-2px);
+		background: rgba(12, 12, 12, 0.06);
+	}
+
+	.test-back-btn:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.info-overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.4);
+		backdrop-filter: blur(4px);
+		z-index: 100;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		animation: fadeIn 200ms ease;
+	}
+
+	.info-sheet {
+		width: 100%;
+		max-width: 32rem;
+		background: #fff;
+		border-radius: 1.5rem 1.5rem 0 0;
+		padding: 1.5rem 1.5rem 2rem;
+		animation: slideUp 250ms ease;
+	}
+
+	.info-sheet-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 1rem;
+	}
+
+	.info-sheet-header h2 {
+		margin: 0;
+		font-size: 1.25rem;
+		font-weight: 800;
+		letter-spacing: -0.04em;
+	}
+
+	.info-close {
+		border: none;
+		background: none;
+		font-size: 1.2rem;
+		cursor: pointer;
+		padding: 0.25rem;
+		color: rgba(10, 10, 10, 0.5);
+		transition: color 150ms ease;
+	}
+
+	.info-close:hover {
+		color: rgba(10, 10, 10, 0.9);
+	}
+
+	.info-sheet-body {
+		margin: 0 0 1.5rem;
+		font-size: 1rem;
+		line-height: 1.6;
+		color: rgba(10, 10, 10, 0.75);
+	}
+
+	.info-dismiss {
+		width: 100%;
+		border: none;
+		border-radius: 999px;
+		padding: 0.85rem;
+		background: #0d0d0d;
+		color: white;
+		font-size: 0.95rem;
+		font-weight: 700;
+		cursor: pointer;
+		transition:
+			transform 180ms ease,
+			opacity 180ms ease;
+	}
+
+	.info-dismiss:hover {
+		transform: translateY(-1px);
+		opacity: 0.92;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	@keyframes slideUp {
+		from { transform: translateY(100%); }
+		to { transform: translateY(0); }
+	}
+
 	.test-shortcuts {
 		margin: 0;
 		text-align: center;
@@ -907,7 +1061,7 @@
 
 	@media (max-width: 640px) {
 		.results-candidates {
-			align-items: stretch;
+			align-items: flex-end;
 		}
 
 		.result-candidate {

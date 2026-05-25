@@ -4,55 +4,63 @@
 		"tema": "Constitución Política",
 		"pregunta": "¿Cuál es tu posición sobre la Constitución del Perú?",
 		"sanchez": "Debería ser reformada totalmente mediante una Asamblea Constituyente.",
-		"fujimori": "Es un documento correcto que debe defenderse."
+		"fujimori": "Es un documento correcto que debe defenderse.",
+		"info": "La Constitución es la ley máxima del país. Establece los derechos de los ciudadanos y cómo se organiza el Estado. Reformarla significa cambiar sus artículos, lo cual puede hacerse por un proceso parlamentario o mediante una Asamblea Constituyente."
 	},
 	{
 		"id": "aborto",
 		"tema": "Aborto",
 		"pregunta": "¿Cuál es tu posición sobre el aborto?",
 		"sanchez": "Está justificado en casos de violación.",
-		"fujimori": "Solo debe permitirse cuando la vida de la madre corre riesgo."
+		"fujimori": "Solo debe permitirse cuando la vida de la madre corre riesgo.",
+		"info": "El aborto es la interrupción voluntaria del embarazo. En el Perú actual, solo está permitido cuando la vida de la madre está en riesgo. Esta es una de las discusiones más polarizantes en el país."
 	},
 	{
 		"id": "matrimonio",
 		"tema": "Matrimonio igualitario",
 		"pregunta": "¿Cuál es tu posición sobre el matrimonio entre personas del mismo sexo?",
 		"sanchez": "Debería legalizarse y permitirse.",
-		"fujimori": "Solo debería abogarse por una unión civil patrimonial."
+		"fujimori": "Solo debería abogarse por una unión civil patrimonial.",
+		"info": "Es el reconocimiento legal del matrimonio entre personas del mismo sexo. En el Perú no está permitido. Una unión civil patrimonial otorga algunos derechos económicos, pero no el mismo estatus que el matrimonio."
 	},
 	{
 		"id": "congreso",
 		"tema": "Cierre del Congreso",
 		"pregunta": "¿Cuál es tu posición sobre el cierre del Congreso?",
 		"sanchez": "Se puede justificar si el Congreso obstaculiza al Presidente.",
-		"fujimori": "Es una acción inconstitucional e inaceptable."
+		"fujimori": "Es una acción inconstitucional e inaceptable.",
+		"info": "Ocurre cuando el Presidente disuelve el Congreso. En la historia peruana, esto ha pasado varias veces. La Constitución permite la disolución solo en casos específicos, como la censura a dos Consejos de Ministros."
 	},
 	{
 		"id": "pacto_san_jose",
 		"tema": "Pacto de San José",
 		"pregunta": "¿Cuál es tu posición sobre el Pacto de San José y la Corte Interamericana de Derechos Humanos?",
 		"sanchez": "El Perú no debe renunciar, es clave para la defensa de los derechos humanos.",
-		"fujimori": "Se debe evaluar un retiro parcial para implementar medidas como jueces sin rostro."
+		"fujimori": "Se debe evaluar un retiro parcial para implementar medidas como jueces sin rostro.",
+		"info": "Es un tratado internacional que protege los derechos humanos en América. La Corte Interamericana de Derechos Humanos (CIDH) vela por su cumplimiento. Perú es Estado parte desde 1978. Renunciar significaría quedar fuera de este sistema de protección."
 	},
 	{
 		"id": "recursos",
 		"tema": "Nacionalización de recursos naturales",
 		"pregunta": "¿Cuál es tu posición sobre los recursos naturales del Perú?",
 		"sanchez": "Debieran ser 100% propiedad del Estado, nacionalizando sectores clave.",
-		"fujimori": "Se deben buscar salidas mixtas con asociaciones público-privadas."
+		"fujimori": "Se deben buscar salidas mixtas con asociaciones público-privadas.",
+		"info": "Significa que el Estado tome control total de recursos como el gas, los minerales o el petróleo. Hoy en día, parte de estos recursos son explotados por empresas privadas mediante concesiones. Las asociaciones público-privadas implican compartir la gestión entre el Estado y empresas."
 	},
 	{
 		"id": "economia",
 		"tema": "Modelo económico",
 		"pregunta": "¿Cuál es tu posición sobre el modelo económico del país?",
 		"sanchez": "El Estado debe asegurar la repartición equitativa de la riqueza.",
-		"fujimori": "Se debe asegurar la libre competencia pero con regulación del Estado."
+		"fujimori": "Se debe asegurar la libre competencia pero con regulación del Estado.",
+		"info": "Es el sistema que define cómo se produce y distribuye la riqueza en el país. El modelo actual se basa en la economía de mercado (libre competencia). La propuesta de repartición equitativa implica mayor intervención del Estado en la distribución."
 	},
 	{
 		"id": "leyes_procrimen",
 		"tema": "Leyes Pro-Crimen",
 		"pregunta": "¿Cuál es tu posición sobre las llamadas 'leyes pro-crimen'?",
 		"sanchez": "Sí existen y se deben derogar.",
-		"fujimori": "Es una narrativa falsa, el Congreso no aprueba ese tipo de normas."
+		"fujimori": "Es una narrativa falsa, el Congreso no aprueba ese tipo de normas.",
+		"info": "Es un término usado para referirse a leyes que, según algunos críticos, favorecen a delincuentes o debilitan la lucha contra el crimen. Ejemplos incluyen reducciones de penas o normas que dificultan la persecución penal. No hay consenso sobre si realmente existen."
 	}
 ]
