@@ -10,7 +10,7 @@
 <section class="relative flex min-h-screen items-center justify-center overflow-hidden bg-black text-white">
 	<video
 		src="/final.webm"
-		poster="/final-poster.jpg"
+		poster="/final-poster.webp"
 		autoplay
 		muted
 		loop
